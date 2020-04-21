@@ -1,3 +1,3 @@
-#Tetris in python
+# Tetris in python
 
-This is a Tetris game made in python and pygame. 
+This is a Tetris game made in python and pygame.
