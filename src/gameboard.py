@@ -1,17 +1,17 @@
 import pygame as pg
 import figure
 
-BG_COLOR = (0,0,0)
+BG_COLOR = (0, 0, 0)
 FPS = 60
-width, height = 500,500
-dis = pg.display.set_mode((width,height))
+width, height = 500, 500
+dis = pg.display.set_mode((width, height))
 
 pg.init()
 clock = pg.time.Clock()
 
 shapes = ["O", "I", "S", "Z", "L", "J", "T"]
-currentShapeNumber = 0
-f = figure.Figure((255,255,255),shapes[currentShapeNumber],(250,250),20)
+currentShapeNumber = 1
+f = figure.Figure((255, 255, 255), shapes[currentShapeNumber], (250, 250), 20)
 
 while True:
     dis.fill(BG_COLOR)
@@ -31,6 +31,7 @@ while True:
                 f.rotateLeft()
             elif event.key == pg.K_SPACE:
                 currentShapeNumber = (currentShapeNumber + 1) % len(shapes)
-                f = figure.Figure((255, 255, 255), shapes[currentShapeNumber], (250, 250), 20)
+                f = figure.Figure(
+                    (255, 255, 255), shapes[currentShapeNumber], (250, 250), 20)
 
     clock.tick(FPS)
