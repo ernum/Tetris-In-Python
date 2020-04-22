@@ -63,7 +63,7 @@ class Figure(object):
             window.fill((0, 0, 0))
 
             shape = self.shape_from_input()
-            if shape:  # 0 is a falsy value so returns false if element is 0
+            if shape:  # None is a falsy value so returns false if element is 0
                 for y, row in enumerate(shape):
                     for x, element in enumerate(row):
                         if element:
