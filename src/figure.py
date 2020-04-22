@@ -2,7 +2,7 @@ import pygame
 import sys
 
 
-class Figure(object):
+class Figure:
     """ This class can be used to generate a figure.
         You can choose one of the original shapes that are
         O, I, S, Z, L, J and T. Input that one of those as
@@ -37,7 +37,7 @@ class Figure(object):
          [0, 0, 0, 0],
          [0, 0, 0, 0]]
 
-    def __init__(self, *colour: tuple, shape: str):
+    def __init__(self, colour, shape):
         pygame.init()
         self.colour = colour
         self.shape = shape
@@ -63,7 +63,7 @@ class Figure(object):
             window.fill((0, 0, 0))
 
             shape = self.shape_from_input()
-            if shape:  # None is a falsy value so returns false if element is 0
+            if shape:  # None is a falsy value so returns false.
                 for y, row in enumerate(shape):
                     for x, element in enumerate(row):
                         if element:
@@ -75,5 +75,5 @@ class Figure(object):
                     'The shape {} does not exist.'.format(self.shape))
 
 
-figure = Figure((255, 255, 255), shape="O")
+figure = Figure((255, 255, 255), shape="S")
 figure.drawFigure()
