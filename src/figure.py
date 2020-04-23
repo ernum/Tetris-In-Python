@@ -1,6 +1,8 @@
-import pygame
-import sys
+import pygame as pg
 
+def drawRect(display, color, x, y, w, outlineColor = (0,0,0), outlineWidth = 1):
+    pg.draw.rect(display, outlineColor, pg.Rect(x, y, w, w))
+    pg.draw.rect(display, color, pg.Rect(x+outlineWidth, y+outlineWidth, w-outlineWidth*2, w-outlineWidth*2))
 
 class Figure:
     """ This class can be used to generate a figure.
@@ -8,42 +10,140 @@ class Figure:
         O, I, S, Z, L, J and T. Input that one of those as
         string args to generate them. """
 
-    O = [[1, 1, 0, 0],
-         [1, 1, 0, 0],
-         [0, 0, 0, 0],
-         [0, 0, 0, 0]]
-    I = [[1, 0, 0, 0],
-         [1, 0, 0, 0],
-         [1, 0, 0, 0],
-         [1, 0, 0, 0]]
-    S = [[0, 1, 1, 0],
-         [1, 1, 0, 0],
-         [0, 0, 0, 0],
-         [0, 0, 0, 0]]
-    Z = [[1, 1, 0, 0],
-         [0, 1, 1, 0],
-         [0, 0, 0, 0],
-         [0, 0, 0, 0]]
-    L = [[1, 0, 0, 0],
-         [1, 0, 0, 0],
-         [1, 1, 0, 0],
-         [0, 0, 0, 0]]
-    J = [[0, 1, 0, 0],
-         [0, 1, 0, 0],
-         [1, 1, 0, 0],
-         [0, 0, 0, 0]]
-    T = [[1, 1, 1, 0],
-         [0, 1, 0, 0],
-         [0, 0, 0, 0],
-         [0, 0, 0, 0]]
+    O = [[[1, 1, 0, 0],
+          [1, 1, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]]]*4
 
-    def __init__(self, colour, shape):
-        pygame.init()
+    I = [[[0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 0, 0]],
+
+         [[0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 1, 0],
+          [0, 0, 1, 0],
+          [0, 0, 1, 0],
+          [0, 0, 1, 0]],
+
+         [[0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [1, 1, 1, 1],
+          [0, 0, 0, 0]]]
+
+    S = [[[0, 1, 1, 0],
+          [1, 1, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 1, 0, 0],
+          [0, 1, 1, 0],
+          [0, 0, 1, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 0, 0],
+          [0, 1, 1, 0],
+          [1, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[1, 0, 0, 0],
+          [1, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]]]
+
+    Z = [[[1, 1, 0, 0],
+          [0, 1, 1, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 1, 0],
+          [0, 1, 1, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 0, 0],
+          [1, 1, 0, 0],
+          [0, 1, 1, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 1, 0, 0],
+          [1, 1, 0, 0],
+          [1, 0, 0, 0],
+          [0, 0, 0, 0]]]
+
+    L = [[[0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 1, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 0, 0],
+          [1, 1, 1, 0],
+          [1, 0, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[1, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 1, 0],
+          [1, 1, 1, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]]]
+
+    J = [[[0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [1, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[1, 0, 0, 0],
+          [1, 1, 1, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 1, 1, 0],
+          [0, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 0, 0, 0],
+          [1, 1, 1, 0],
+          [0, 0, 1, 0],
+          [0, 0, 0, 0]]]
+
+    T = [[[0, 0, 0, 0],
+          [1, 1, 1, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 1, 0, 0],
+          [1, 1, 0, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 1, 0, 0],
+          [1, 1, 1, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]],
+
+         [[0, 1, 0, 0],
+          [0, 1, 1, 0],
+          [0, 1, 0, 0],
+          [0, 0, 0, 0]]]
+
+    def __init__(self, colour, shape, startPos, blockSize):
         self.colour = colour
-        self.shape = shape
+        self.shapeList = self.shape_from_input(shape)
+        self.currentRotation = 0
+        self.posX, self.posY = startPos
+        self.blockSize = blockSize
 
-    def shape_from_input(self):
-        return {
+    def shape_from_input(self, shape):
+        s = {
             'O': self.O,
             'I': self.I,
             'S': self.S,
@@ -51,29 +151,23 @@ class Figure:
             'L': self.L,
             'J': self.J,
             'T': self.T,
-        }.get(self.shape, None)
+        }.get(shape)
 
-    def drawFigure(self):
-        # Följande kan vi flytta till gameboard när vi börjar med den.
-        window = pygame.display.set_mode([640, 600])
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-            window.fill((0, 0, 0))
+        if not s:  # None is a falsy value so returns false.
+            raise ValueError(
+                'The shape {} does not exist.'.format(self.shapeList))
+        return s
 
-            shape = self.shape_from_input()
-            if shape:  # None is a falsy value so returns false.
-                for y, row in enumerate(shape):
-                    for x, element in enumerate(row):
-                        if element:
-                            pygame.draw.rect(window, self.colour,
-                                             pygame.draw.rect(window, self.colour, pygame.Rect(((20*x)+20, (20*y)+20), (20, 20))))
-                pygame.display.update()
-            else:
-                raise ValueError(
-                    'The shape {} does not exist.'.format(self.shape))
+    def rotateRight(self):
+        self.currentRotation = (self.currentRotation + 1) % 4
 
+    def rotateLeft(self):
+        self.currentRotation = (self.currentRotation - 1) % 4
 
-figure = Figure((255, 255, 255), shape="S")
-figure.drawFigure()
+    def drawFigure(self, window):
+        shape = self.shapeList[self.currentRotation]
+
+        for y, row in enumerate(shape):
+            for x, element in enumerate(row):
+                if element:
+                    drawRect(window,self.colour,self.posX + x * self.blockSize,self.posY + y * self.blockSize, self.blockSize)
