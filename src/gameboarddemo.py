@@ -15,9 +15,25 @@ shapes = ["O", "I", "S", "Z", "L", "J", "T"]
 currentShapeNumber = 0
 board_rows = 18
 board_cols = 14
-gb = gameboard.Board((255, 255, 255), ((width - 20*board_cols)/2),
+start_pos = (width/2 - 15, 20)
+gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      ((height - 20*board_rows)/2), 18, 14, 20)
-f = figure.Figure((250, 250, 0), shapes[currentShapeNumber], (250, 0), 20)
+
+f = figure.Figure((250, 250, 0), shapes[currentShapeNumber], start_pos, 20)
+
+
+def matrix_merge(board, figure):
+    # Right now first pos of fig ([0]). Will need to get the right rotation as well.
+    rotation = figure.currentRotation
+    fig_m = figure.shape_from_input(shapes[currentShapeNumber])[rotation]
+    board_matrix = board.board_matrix(board_rows, board_cols)
+
+    for j in range(len(fig_m[0])):
+        for i in range(len(fig_m)):
+            if fig_m[j][i] != 0:
+                board_matrix[j][i + int(len(board_matrix[0]) / 2) - 1] = fig_m[j][i]
+
+    return board_matrix
 
 tickRate = 1  # Times per second shapes are falling downwards
 
@@ -27,9 +43,9 @@ tickCount = 0
 while True:
 
     dis.fill(BG_COLOR)
-    gb.drawFigure(dis)
-    f.drawFigure(dis)
 
+    board_matrix = matrix_merge(gb, f)
+    gb.drawMatrix(dis, board_matrix)
     pg.display.update()
 
     for event in pg.event.get():
@@ -37,6 +53,9 @@ while True:
             raise SystemExit
 
         if event.type == pg.KEYDOWN:
+
+            board_m = gb.board_matrix(board_rows, board_cols)
+
             # Controls
             if event.key == pg.K_x:
                 f.rotate_clockwise()
@@ -44,6 +63,7 @@ while True:
                 f.rotate_anticlockwise()
             if event.key == pg.K_LEFT:
                 f.move_left()
+
             if event.key == pg.K_RIGHT:
                 f.move_right()
             if event.key == pg.K_DOWN:
@@ -76,7 +96,8 @@ while True:
             if event.key == pg.K_7:
                 currentShapeNumber = 6
                 f = figure.Figure(
-                    (200, 20, 250), shapes[currentShapeNumber], (250, 250), 20)
+                    (200, 20, 250), shapes[currentShapeNumber], start_pos, 20)
+
 
         if event.type == pg.KEYUP:
             # Controls
