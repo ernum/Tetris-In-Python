@@ -43,6 +43,9 @@ tickCount = 0
 while True:
 
     dis.fill(BG_COLOR)
+    # f.drawFigure(dis)
+    gb.drawFigure(dis)
+    f.drawFigure(dis)
 
     board_matrix = matrix_merge(gb, f)
     gb.drawMatrix(dis, board_matrix)
@@ -72,31 +75,32 @@ while True:
             if event.key == pg.K_1:
                 currentShapeNumber = 0
                 f = figure.Figure(
-                    (250, 250, 0), shapes[currentShapeNumber], (250, 250), 20)
-            if event.key == pg.K_2:
+                    (250, 250, 0), shapes[currentShapeNumber], (f.posX,f.posY), 20)
+            elif event.key == pg.K_2:
                 currentShapeNumber = 1
                 f = figure.Figure(
-                    (20, 250, 250), shapes[currentShapeNumber], (250, 250), 20)
-            if event.key == pg.K_3:
+                    (20, 250, 250), shapes[currentShapeNumber], (f.posX,f.posY), 20)
+            elif event.key == pg.K_3:
                 currentShapeNumber = 2
                 f = figure.Figure(
-                    (0, 255, 0), shapes[currentShapeNumber], (250, 250), 20)
-            if event.key == pg.K_4:
+                    (0, 255, 0), shapes[currentShapeNumber], (f.posX,f.posY), 20)
+            elif event.key == pg.K_4:
                 currentShapeNumber = 3
                 f = figure.Figure(
-                    (255, 0, 0), shapes[currentShapeNumber], (250, 250), 20)
-            if event.key == pg.K_5:
+                    (255, 0, 0), shapes[currentShapeNumber], (f.posX, f.posY), 20)
+            elif event.key == pg.K_5:
                 currentShapeNumber = 4
                 f = figure.Figure(
-                    (255, 150, 20), shapes[currentShapeNumber], (250, 250), 20)
-            if event.key == pg.K_6:
+                    (255, 150, 20), shapes[currentShapeNumber], (f.posX, f.posY), 20)
+            elif event.key == pg.K_6:
                 currentShapeNumber = 5
                 f = figure.Figure(
-                    (0, 0, 255), shapes[currentShapeNumber], (250, 250), 20)
-            if event.key == pg.K_7:
+                    (0, 0, 255), shapes[currentShapeNumber], (f.posX, f.posY), 20)
+            elif event.key == pg.K_7:
                 currentShapeNumber = 6
                 f = figure.Figure(
-                    (200, 20, 250), shapes[currentShapeNumber], start_pos, 20)
+                    (200, 20, 250), shapes[currentShapeNumber], (f.posX, f.posY), 20)
+                    (250, 250, 0), shapes[currentShapeNumber], (250, 250), 20)
 
 
         if event.type == pg.KEYUP:

@@ -125,6 +125,9 @@ class Figure:
         self.posX, self.posY = startPos
         self.blockSize = blockSize
 
+    def fall(self):
+        self.posY += self.blockSize
+
     def shape_from_input(self, shape):
         s = {
             'O': self.O,
