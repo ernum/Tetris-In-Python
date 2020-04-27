@@ -1,6 +1,26 @@
 # Tetris in python
 
-This will be a Tetris game built using python and more specifically developed using the pygame library. The game will at least have all the basic functionality of classic tetris with good graphical representation.
+This is a Tetris game built using python and pygame.
 
-The game will be downloadable as an executable.
+## MVP
+
+* The user can rotate and move shapes.
+* Shapes are falling downwards
+* Shapes land on top of eachother or on the floor
+* All shapes from the classic tetris should be implemented
+
+<img src="images/tetris-shapes.png" alt="classic tetris shapes"/>
+
+* If a row is filled with shapes, the row disappears
+* The game is over if a shape lands such that some part of it is over the game board. 
+
+
+## Installation
+
+Coming soon...
+
+## Technologies
+    Python 3
+    Pygame
+
 
