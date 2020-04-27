@@ -1,8 +1,10 @@
 import pygame as pg
 
+
 def drawRect(display, color, x, y, w, outlineColor = (0,0,0), outlineWidth = 1):
     pg.draw.rect(display, outlineColor, pg.Rect(x, y, w, w))
     pg.draw.rect(display, color, pg.Rect(x+outlineWidth, y+outlineWidth, w-outlineWidth*2, w-outlineWidth*2))
+
 
 class Figure:
     """ This class can be used to generate a figure.

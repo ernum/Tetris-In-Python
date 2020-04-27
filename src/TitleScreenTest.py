@@ -19,7 +19,8 @@ def change_color():
 
 def launch_demo():
     root.destroy()
-    runpy.run_path("gameboard.py")
+
+    runpy.run_path("gameboarddemo.py")
 
 
 # Create

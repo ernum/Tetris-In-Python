@@ -1,61 +1,50 @@
 import pygame as pg
-import figure
-
-BG_COLOR = (0, 0, 0)
-FPS = 60
-width, height = 500, 500
-dis = pg.display.set_mode((width, height))
 
 pg.init()
-clock = pg.time.Clock()
 
-shapes = ["O", "I", "S", "Z", "L", "J", "T"]
-currentShapeNumber = 0
-f = figure.Figure((250, 250, 0), shapes[currentShapeNumber], (250, 250), 20)
+margin = 1
+white = (255, 255, 255)
+black = (0, 0, 0)
 
-while True:
-    dis.fill(BG_COLOR)
 
-    f.drawFigure(dis)
+class Board:
+    """ Game board represented as a nxm matrix
+    with borders as nines. Ex:
+    [90009]
+    [90009]
+    [90009]
+    [99999]
+    """
 
-    pg.display.update()
+    def __init__(self, colour, startX, startY, no_of_rows, no_of_cols, blockSize):
+        self.colour = colour
+        self.posX = startX
+        self.posY = startY
+        self.no_of_rows = no_of_rows
+        self.no_of_cols = no_of_cols
+        self.board = self.board_matrix(no_of_rows, no_of_cols)
+        self.blockSize = blockSize
 
-    for event in pg.event.get():
-        if event.type == pg.QUIT:
-            raise SystemExit
+    def board_matrix(self, rows, cols):
+        board = [[0 for i in range(cols)] for j in range(rows)]
+        for i in range(rows):
+            board[i][0] = 9
+            board[i][len(board[0]) - 1] = 9
+            if i == rows - 1:
+                board[i] = [9 for j in range(len(board[0]))]
+        return board
 
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_RIGHT:
-                f.rotateRight()
-            elif event.key == pg.K_LEFT:
-                f.rotateLeft()
-            elif event.key == pg.K_1:
-                currentShapeNumber = 0
-                f = figure.Figure(
-                    (250, 250, 0), shapes[currentShapeNumber], (250, 250), 20)
-            elif event.key == pg.K_2:
-                currentShapeNumber = 1
-                f = figure.Figure(
-                    (20, 250, 250), shapes[currentShapeNumber], (250, 250), 20)
-            elif event.key == pg.K_3:
-                currentShapeNumber = 2
-                f = figure.Figure(
-                    (0, 255, 0), shapes[currentShapeNumber], (250, 250), 20)
-            elif event.key == pg.K_4:
-                currentShapeNumber = 3
-                f = figure.Figure(
-                    (255, 0, 0), shapes[currentShapeNumber], (250, 250), 20)
-            elif event.key == pg.K_5:
-                currentShapeNumber = 4
-                f = figure.Figure(
-                    (255, 150, 20), shapes[currentShapeNumber], (250, 250), 20)
-            elif event.key == pg.K_6:
-                currentShapeNumber = 5
-                f = figure.Figure(
-                    (0, 0, 255), shapes[currentShapeNumber], (250, 250), 20)
-            elif event.key == pg.K_7:
-                currentShapeNumber = 6
-                f = figure.Figure(
-                    (200, 20, 250), shapes[currentShapeNumber], (250, 250), 20)
+    def drawFigure(self, window):
+        for column in range(self.no_of_cols):
+            for row in range(self.no_of_rows):
+                if self.board[row][column] == 9:
+                    pg.draw.rect(window, self.colour,
+                                 ((self.posX + self.blockSize * column + margin * column,
+                                   self.posY + row * self.blockSize + row * margin),
+                                  (self.blockSize, self.blockSize)))
+                if self.board[row][column] == 0:
+                    pg.draw.rect(window, black,
+                                 ((self.posX + self.blockSize * column + margin * column,
+                                   self.posY + row * self.blockSize + row * margin),
+                                  (self.blockSize, self.blockSize)))
 
-    clock.tick(FPS)
