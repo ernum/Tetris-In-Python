@@ -2,6 +2,7 @@ import pygame as pg
 import figure
 import gameboard
 import generateShapes
+import pygameTitleScreen
 
 
 BG_COLOR = (0, 0, 0)
@@ -18,6 +19,8 @@ board_rows = 18
 board_cols = 14
 
 BLOCK_SIZE = 20
+
+pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      ((height - 20*board_rows)/2), 18, 14, 20)
