@@ -14,7 +14,7 @@ class Figure:
         string args to generate them. """
 
     O = [[[1, 1],
-          [1, 1]]]*4
+          [1, 1]]] * 4
 
     I = [[[0, 2, 0, 0],
           [0, 2, 0, 0],
@@ -118,12 +118,16 @@ class Figure:
 
     def __init__(self, colour, shape, startPos, blockSize):
         self.colour = colour
+        self.shape = shape
         self.shapeList = self.shape_from_input(shape)
         self.currentRotation = 0
         self.sideways_speed = 0
         self.downwards_speed = 0
         self.posX, self.posY = startPos
         self.blockSize = blockSize
+
+    def copy(self):
+        return Figure(self.colour,self.shape,(self.posX,self.posY),self.blockSize)
 
     def fall(self):
         self.posY += self.blockSize

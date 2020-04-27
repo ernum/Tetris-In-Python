@@ -1,6 +1,7 @@
 import pygame as pg
 import figure
 import gameboard
+import generateShapes
 
 
 BG_COLOR = (0, 0, 0)
@@ -15,6 +16,8 @@ shapes = ["O", "I", "S", "Z", "L", "J", "T"]
 currentShapeNumber = 0
 board_rows = 18
 board_cols = 14
+
+BLOCK_SIZE = 20
 start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      ((height - 20*board_rows)/2), 18, 14, 20)
@@ -39,10 +42,16 @@ tickRate = 1  # Times per second shapes are falling downwards
 
 
 tickCount = 0
-
 pos = [0, 0]
+queue = generateShapes.figureQueue(4,BLOCK_SIZE)
 
 while True:
+
+    dis.fill(BG_COLOR)
+    # f.drawFigure(dis)
+    gb.drawFigure(dis)
+    f.drawFigure(dis)
+    queue.draw(dis,width-90,0,90,200)
 
     board_matrix = matrix_merge(gb, f, pos[0], pos[1])
     gb.drawMatrix(dis, board_matrix)
