@@ -120,6 +120,8 @@ class Figure:
         self.colour = colour
         self.shapeList = self.shape_from_input(shape)
         self.currentRotation = 0
+        self.sideways_speed = 0
+        self.downwards_speed = 0
         self.posX, self.posY = startPos
         self.blockSize = blockSize
 
@@ -134,16 +136,31 @@ class Figure:
             'T': self.T,
         }.get(shape)
 
-        if not s:  # None is a falsy value so returns false.
+        if not s:
             raise ValueError(
                 'The shape {} does not exist.'.format(self.shapeList))
         return s
 
-    def rotateRight(self):
+    def rotate_clockwise(self):
         self.currentRotation = (self.currentRotation + 1) % 4
 
-    def rotateLeft(self):
+    def rotate_anticlockwise(self):
         self.currentRotation = (self.currentRotation - 1) % 4
+
+    def move_left(self):
+        self.sideways_speed -= 2
+
+    def move_right(self):
+        self.sideways_speed += 2
+
+    def move_down(self):
+        self.downwards_speed += 2
+
+    def counter_move_down(self):
+        self.downwards_speed -= 2
+
+    def fall(self):
+        self.posY += self.blockSize
 
     def drawFigure(self, window):
         shape = self.shapeList[self.currentRotation]
