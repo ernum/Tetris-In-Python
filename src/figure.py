@@ -10,8 +10,8 @@ class Figure:
         O, I, S, Z, L, J and T. Input that one of those as
         string args to generate them. """
 
-    O = [[[1, 1, 0, 0],
-          [1, 1, 0, 0],
+    O = [[[0, 1, 1, 0],
+          [0, 1, 1, 0],
           [0, 0, 0, 0],
           [0, 0, 0, 0]]]*4
 
