@@ -72,7 +72,7 @@ def titlePage(dis):
     w,h = dis.get_rect().size
     titleFontSize = 100
     titleStartY = -titleFontSize
-    titleDropSpeed = 5
+    titleDropSpeed = 1
 
     buttonWidth = 100
     buttonHeight = 50
@@ -111,11 +111,19 @@ def titlePage(dis):
         else:
             exitButton.noHover()
 
-
+        # Title drop animation
         titleY = title.pos[1]
         if titleY < titleEndY:
-            title.pos = (title.pos[0],title.pos[1]+titleDropSpeed)
-
+            titleDropSpeed += 0.5
+            title.pos = (title.pos[0], title.pos[1] + titleDropSpeed)
+        if titleY > titleEndY and titleDropSpeed != 0:
+            if titleDropSpeed > 0:
+                titleDropSpeed *= -1
+            titleDropSpeed += 3
+            title.pos = (title.pos[0], title.pos[1] + titleDropSpeed)
+        if titleY > titleEndY + 3:
+            titleDropSpeed = 0
+            title.pos = (title.pos[0], title.pos[1] + titleDropSpeed)
         startButton.draw(dis)
         exitButton.draw(dis)
         title.draw(dis)

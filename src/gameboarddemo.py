@@ -9,7 +9,6 @@ BG_COLOR = (0, 0, 0)
 FPS = 60
 width, height = 500, 500
 dis = pg.display.set_mode((width, height))
-
 pg.init()
 clock = pg.time.Clock()
 
@@ -21,8 +20,10 @@ board_cols = 14
 BLOCK_SIZE = 20
 
 # Music
-soundtrack = pg.mixer.Sound("../Sound/aaaa.wav")
-pg.mixer.Sound.play(soundtrack, -1)
+pg.mixer.init()
+pg.mixer.music.load("../Sound/electrifyLowerTempDelayed.wav")
+pg.mixer.music.play(-1)
+pg.mixer.music.set_volume(0.6)
 
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
@@ -115,6 +116,5 @@ while True:
 
     if tickCount % (FPS/tickRate) == 0:
         f.fall()
-
     clock.tick(FPS)
     tickCount += 1
