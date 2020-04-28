@@ -1,11 +1,10 @@
 import pygame as pg
+from gameboard import images
 
 
-def drawRect(display, color, x, y, w, outlineColor=(0, 0, 0), outlineWidth=1):
-    pg.draw.rect(display, outlineColor, pg.Rect(x, y, w, w))
-    pg.draw.rect(display, color, pg.Rect(x+outlineWidth, y +
-                                         outlineWidth, w-outlineWidth*2, w-outlineWidth*2))
-
+def drawRect(display, imageNumber, x, y, w):
+    image = pg.transform.scale(images[imageNumber-1], (w,w))
+    display.blit(image,(x,y,w,w))
 
 class Figure:
     """ This class can be used to generate a figure.
@@ -127,6 +126,13 @@ class Figure:
         self.blockSize = blockSize
         self.matrixPosX = 0
         self.matrixPosY = 0
+        self.imageNumber = 0
+
+        for i in self.shapeList[0]:
+            for j in i:
+                if j != 0:
+                    self.imageNumber = j
+                    break
 
     def copy(self):
         return Figure(self.colour,self.shape,(self.posX,self.posY),self.blockSize)
@@ -180,6 +186,6 @@ class Figure:
         for y, row in enumerate(shape):
             for x, element in enumerate(row):
                 if element:
-                    drawRect(window, self.colour, self.posX + x * self.blockSize,
+                    drawRect(window, self.imageNumber, self.posX + x * self.blockSize,
                              self.posY + y * self.blockSize, self.blockSize)
 

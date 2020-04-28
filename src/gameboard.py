@@ -15,7 +15,6 @@ pink = (200, 20, 250)
 colors = [black, yellow, turq, green, red, orange, blue, pink, white]
 
 walls_img = pg.image.load("../images/block2020.png")
-
 yel_img = pg.image.load("../images/yel.png")
 turq_img = pg.image.load("../images/turq.png")
 green_img = pg.image.load("../images/green.png")
@@ -24,6 +23,7 @@ orange_img = pg.image.load("../images/orange.png")
 blue_img = pg.image.load("../images/blue.png")
 pink_img = pg.image.load("../images/pink.png")
 
+images = [yel_img, turq_img, green_img, red_img, orange_img, blue_img, pink_img]
 
 class Board:
     """ Game board represented as a nxm matrix
