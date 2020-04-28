@@ -51,9 +51,6 @@ queue = generateShapes.figureQueue(4,BLOCK_SIZE)
 while True:
 
     dis.fill(BG_COLOR)
-    # f.drawFigure(dis)
-    gb.drawFigure(dis)
-    f.drawFigure(dis)
     queue.draw(dis,width-90,0,90,200)
 
     board_matrix = matrix_merge(gb, f, pos[0], pos[1])
