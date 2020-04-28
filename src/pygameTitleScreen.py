@@ -65,6 +65,10 @@ def start():
 started = False
 
 def titlePage(dis):
+    pg.display.set_caption("TETRIS")
+    icon = pg.image.load("../images/tetrisIcon2.png")
+    pg.display.set_icon(icon)
+
     w,h = dis.get_rect().size
     titleFontSize = 100
     titleStartY = -titleFontSize

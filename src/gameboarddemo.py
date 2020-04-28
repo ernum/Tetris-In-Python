@@ -20,10 +20,14 @@ board_cols = 14
 
 BLOCK_SIZE = 20
 
+# Music
+soundtrack = pg.mixer.Sound("../Sound/aaaa.wav")
+pg.mixer.Sound.play(soundtrack, -1)
+
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
-                     ((height - 20*board_rows)/2), 18, 14, 20)
+                     0, 18, 14, 20)
 
 f = figure.Figure((250, 250, 0), shapes[currentShapeNumber], start_pos, 20)
 
