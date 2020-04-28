@@ -28,7 +28,7 @@ gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
 f = figure.Figure((250, 250, 0), shapes[currentShapeNumber], start_pos, 20)
 
 
-def matrix_merge(board, figure, posX, posY):
+def matrix_merge(board, figure):
     # Right now first pos of fig ([0]). Will need to get the right rotation as well.
     rotation = figure.currentRotation
     fig_m = figure.shape_from_input(shapes[currentShapeNumber])[rotation]
@@ -37,7 +37,9 @@ def matrix_merge(board, figure, posX, posY):
     for j in range(len(fig_m[0])):
         for i in range(len(fig_m)):
             if fig_m[j][i] != 0:
-                board_matrix[j][i + int(len(board_matrix[0]) / 2) - 1] = fig_m[j][i]
+                row = j + figure.matrixPosY
+                column = i + int(len(board_matrix[0]) / 2) - 1 + figure.matrixPosX
+                board_matrix[row][column] = fig_m[j][i]
 
     return board_matrix
 
@@ -53,7 +55,7 @@ while True:
     dis.fill(BG_COLOR)
     queue.draw(dis,width-90,0,90,200)
 
-    board_matrix = matrix_merge(gb, f, pos[0], pos[1])
+    board_matrix = matrix_merge(gb, f)
     gb.drawMatrix(dis, board_matrix)
     pg.display.update()
 
@@ -107,19 +109,8 @@ while True:
                 f = figure.Figure(
                     (200, 20, 250), shapes[currentShapeNumber], (f.posX, f.posY), 20)
 
-        if event.type == pg.KEYUP:
-            # Controls
-            if event.key == pg.K_LEFT:
-                f.move_right()
-            if event.key == pg.K_RIGHT:
-                f.move_left()
-            if event.key == pg.K_DOWN:
-                f.counter_move_down()
-
     if tickCount % (FPS/tickRate) == 0:
         f.fall()
 
-    f.posX += f.sideways_speed
-    f.posY += f.downwards_speed
     clock.tick(FPS)
     tickCount += 1

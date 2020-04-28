@@ -125,12 +125,15 @@ class Figure:
         self.downwards_speed = 0
         self.posX, self.posY = startPos
         self.blockSize = blockSize
+        self.matrixPosX = 0
+        self.matrixPosY = 0
 
     def copy(self):
         return Figure(self.colour,self.shape,(self.posX,self.posY),self.blockSize)
 
     def fall(self):
         self.posY += self.blockSize
+        self.matrixPosY += 1
 
     def shape_from_input(self, shape):
         s = {
@@ -155,19 +158,21 @@ class Figure:
         self.currentRotation = (self.currentRotation - 1) % 4
 
     def move_left(self):
-        self.sideways_speed -= 2
+        self.posX -= self.blockSize
+        self.matrixPosX -= 1
 
     def move_right(self):
-        self.sideways_speed += 2
+        self.posX += self.blockSize
+        self.matrixPosX += 1
 
     def move_down(self):
-        self.downwards_speed += 2
+        self.posY += self.blockSize
+        self.matrixPosY += 1
 
-    def counter_move_down(self):
-        self.downwards_speed -= 2
 
     def fall(self):
         self.posY += self.blockSize
+        self.matrixPosY += 1
 
     def drawFigure(self, window):
         shape = self.shapeList[self.currentRotation]
