@@ -19,6 +19,7 @@ t = time.time()
 # do stuff
 elapsed = time.time() - t
 
+
 class Button:
     def __init__(self,rect,color,outlineWidth,outlineColor,text,textSize,textColor,onClickFunction,hoverColor):
         self.color = color
@@ -54,6 +55,39 @@ class Button:
         textSize = rend.get_rect().size
         dis.blit(rend,(self.x + self.w/2 - textSize[0]/2,self.y + self.h/2 - textSize[1]/2))
 
+class Slider:
+    def __init__(self,rect,vertical, valFrom, valTo, valStart):
+        self.x, self.y, self.w, self.h = rect
+        self.vertical = vertical
+        self.val = valStart
+        self.valFrom = valFrom
+        self.valTo = valTo
+
+    def draw(self,dis):
+        if self.vertical:
+            pg.draw.rect(dis,(255,255,255),(self.x,self.y,self.w,self.h),2)
+            sliderH = (self.val-self.valFrom)/(self.valTo-self.valFrom) * self.h
+            pg.draw.rect(dis,(255,255,255),(self.x,self.y+self.h-sliderH,self.w,sliderH))
+        else:
+            pg.draw.rect(dis,(255,255,255),(self.x,self.y,self.w,self.h),2)
+            sliderW = (self.val-self.valFrom)/(self.valTo-self.valFrom) * self.w
+            pg.draw.rect(dis,(255,255,255),(self.x,self.y,sliderW,self.h))
+
+    def isInside(self,pos):
+        x, y = pos
+        return x >= self.x and x <= self.x + self.w and y >= self.y and y <= self.y + self.h
+
+    def update(self):
+        p = pg.mouse.get_pos()
+        if self.isInside(p):
+            if self.vertical:
+                newVal = (self.y+self.h-p[1]) / self.h
+                self.val = newVal
+            else:
+                newVal = (p[0]-(self.x)) / self.w
+                self.val = newVal
+            return True
+        return False
 
 class Text:
     def __init__(self,text,color,size,center):
@@ -86,6 +120,8 @@ started = False
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
     icon = pg.image.load("../images/tetrisIcon2.png")
+    volumeImage = pg.image.load("../images/volume.png")
+
     pg.display.set_icon(icon)
 
     w,h = dis.get_rect().size
@@ -96,6 +132,17 @@ def titlePage(dis):
     buttonWidth = 100
     buttonHeight = 50
     buttonFontSize = 30
+
+    sliderWidth = 20
+    sliderHeight = 60
+    sliderMargin = 20
+    sliderRect = (w-sliderWidth-sliderMargin,h-sliderHeight-sliderMargin,sliderWidth,sliderHeight)
+
+    volumeIconW = 40
+    volumeIconPos = (sliderRect[0]-volumeIconW-10,sliderRect[1] + sliderRect[3]//2 - volumeIconW//2)
+
+    volumeSlider = Slider(sliderRect,True,0,1,0.5)
+    volumeImage = pg.transform.scale(volumeImage,(volumeIconW,volumeIconW))
 
     buttonHoverColor = (200,200,200)
 
@@ -117,7 +164,7 @@ def titlePage(dis):
             if event.type == pg.QUIT:
                 raise SystemExit
 
-            if event.type == pg.MOUSEBUTTONUP:
+            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
                 if startButton.isInside(pg.mouse.get_pos()):
                     startButton.click()
                 if exitButton.isInside(pg.mouse.get_pos()):
@@ -132,6 +179,10 @@ def titlePage(dis):
             exitButton.hover()
         else:
             exitButton.noHover()
+
+        if pg.mouse.get_pressed()[0]:
+            if volumeSlider.update():
+                pg.mixer.music.set_volume(volumeSlider.val)
 
         if time.time() - t > 0.2:
             rand = ri(1, len(colors) - 2)
@@ -158,6 +209,8 @@ def titlePage(dis):
         startButton.draw(dis)
         exitButton.draw(dis)
         title.draw(dis)
+        volumeSlider.draw(dis)
+        dis.blit(volumeImage,volumeIconPos)
 
         pg.display.update()
 
