@@ -51,7 +51,7 @@ def matrix_merge(board, figure):
 tickRate = 1  # Times per second shapes are falling downwards
 
 
-tickCount = 0
+tickCount = 1
 pos = [0, 0]
 queue = generateShapes.figureQueue(4,BLOCK_SIZE)
 
