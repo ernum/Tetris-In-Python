@@ -20,6 +20,7 @@ t = time.time()
 # do stuff
 elapsed = time.time() - t
 
+muted = False
 
 def exit():
     raise SystemExit
@@ -81,6 +82,8 @@ def titlePage(dis):
                 p = pg.mouse.get_pos()
                 if startButton.isInside(p):
                     startButton.click()
+                    global muted
+                    muted = volume.muted
                 if exitButton.isInside(p):
                     exitButton.click()
 
@@ -127,11 +130,6 @@ def titlePage(dis):
         exitButton.draw(dis)
         title.draw(dis)
         volume.draw(dis)
-
-        if muted:
-            pg.draw.line(dis,(255,0,0),[i + (volumeIconW-crossLength)/2 for i in volumeIconPos],[i + crossLength + (volumeIconW-crossLength)/2 for i in volumeIconPos],crossWidth)
-            pg.draw.line(dis,(255,0,0),(volumeIconPos[0]+crossLength + (volumeIconW-crossLength)/2,volumeIconPos[1] + (volumeIconW-crossLength)/2),(volumeIconPos[0] + (volumeIconW-crossLength)/2,volumeIconPos[1] + crossLength + (volumeIconW-crossLength)/2),crossWidth)
-
 
         pg.display.update()
 

@@ -92,7 +92,7 @@ class Text:
 class VolumeController:
     def __init__(self,rect,mutePos,muteRad):
         self.x, self.y, self.w, self.h = rect
-        self.val = 0.5
+        self.val = 0.6
         self.valFrom = 0
         self.valTo = 1
         self.mutePos = mutePos

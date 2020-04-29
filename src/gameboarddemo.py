@@ -90,6 +90,10 @@ muteClickRadius = 20
 volume = UI.VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
                           muteClickRadius)
 
+volume.val = pg.mixer.music.get_volume()
+volume.muted = pygameTitleScreen.muted
+
+
 while True:
 
     dis.fill(BG_COLOR)
