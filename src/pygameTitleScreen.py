@@ -116,6 +116,8 @@ def start():
 
 started = False
 
+def sqrDistance(p1,p2):
+    return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
 
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
@@ -140,6 +142,12 @@ def titlePage(dis):
 
     volumeIconW = 40
     volumeIconPos = (sliderRect[0]-volumeIconW-10,sliderRect[1] + sliderRect[3]//2 - volumeIconW//2)
+    crossWidth = 5
+    crossLength = volumeIconW/2
+
+    muted = False
+    muteClickRadius = volumeIconW/2
+    sqrMuteClickRadius = muteClickRadius**2
 
     volumeSlider = Slider(sliderRect,True,0,1,0.5)
     volumeImage = pg.transform.scale(volumeImage,(volumeIconW,volumeIconW))
@@ -169,6 +177,13 @@ def titlePage(dis):
                     startButton.click()
                 if exitButton.isInside(pg.mouse.get_pos()):
                     exitButton.click()
+
+                if sqrDistance(pg.mouse.get_pos(),[i + volumeIconW/2 for i in volumeIconPos]) <= sqrMuteClickRadius:
+                    if muted:
+                        pg.mixer.music.unpause()
+                    else:
+                        pg.mixer.music.pause()
+                    muted = not muted
 
         if startButton.isInside(pg.mouse.get_pos()):
             startButton.hover()
@@ -211,6 +226,11 @@ def titlePage(dis):
         title.draw(dis)
         volumeSlider.draw(dis)
         dis.blit(volumeImage,volumeIconPos)
+
+        if muted:
+            pg.draw.line(dis,(255,0,0),[i + (volumeIconW-crossLength)/2 for i in volumeIconPos],[i + crossLength + (volumeIconW-crossLength)/2 for i in volumeIconPos],crossWidth)
+            pg.draw.line(dis,(255,0,0),(volumeIconPos[0]+crossLength + (volumeIconW-crossLength)/2,volumeIconPos[1] + (volumeIconW-crossLength)/2),(volumeIconPos[0] + (volumeIconW-crossLength)/2,volumeIconPos[1] + crossLength + (volumeIconW-crossLength)/2),crossWidth)
+
 
         pg.display.update()
 
