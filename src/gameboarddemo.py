@@ -44,7 +44,7 @@ def matrix_merge(currentMatrix, figure):
         for i in range(len(fig_m)):
             if fig_m[j][i] != 0:
                 row = j + figure.matrixPosY
-                column = i  + figure.matrixPosX
+                column = i + figure.matrixPosX
                 under = currentMatrix[row+1][column]
                 if under != 0:
                     collisionFound = True
@@ -52,6 +52,21 @@ def matrix_merge(currentMatrix, figure):
 
 
     return newMatrix, collisionFound
+
+def checkCollision(currentMatrix, figure, movement):
+    # Right now first pos of fig ([0]). Will need to get the right rotation as well.
+    rotation = figure.currentRotation
+    fig_m = figure.shapeList[rotation]
+
+    for j in range(len(fig_m[0])):
+        for i in range(len(fig_m)):
+            if fig_m[j][i] != 0:
+                row = j + figure.matrixPosY + movement[1]
+                column = i  + figure.matrixPosX + movement[0]
+                nextBlock = currentMatrix[row][column]
+                if nextBlock != 0:
+                    return True
+    return False
 
 def nextShape(queue, currentMatrix):
     figure = queue.next()
@@ -93,9 +108,11 @@ while True:
             if event.key == pg.K_z:
                 f.rotate_anticlockwise()
             if event.key == pg.K_LEFT:
-                f.move_left()
+                if not checkCollision(gb.board,f,(-1,0)):
+                    f.move_left()
             if event.key == pg.K_RIGHT:
-                f.move_right()
+                if not checkCollision(gb.board,f,(1,0)):
+                    f.move_right()
             if event.key == pg.K_DOWN:
                 f.move_down()
 
