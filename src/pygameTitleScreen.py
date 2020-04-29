@@ -124,6 +124,7 @@ def titlePage(dis):
         if titleY > titleEndY + 3:
             titleDropSpeed = 0
             title.pos = (title.pos[0], title.pos[1] + titleDropSpeed)
+            
         startButton.draw(dis)
         exitButton.draw(dis)
         title.draw(dis)
