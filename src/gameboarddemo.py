@@ -72,6 +72,13 @@ def nextShape(queue, currentMatrix):
     figure.matrixPosX = middle
     return figure
 
+def gameOver(figure, matrix):
+    top_row = [a for a in matrix[0]]
+    for i in top_row:
+        if i != 0 and i != 8:
+            return True
+    return False
+
 
 tickRate = 1  # Times per second shapes are falling downwards
 
@@ -87,10 +94,14 @@ while True:
 
     drawMatrix, collision = matrix_merge(gb.board, f)
     gb.drawMatrix(dis, drawMatrix)
+
     if collision:
         gb.board = drawMatrix
         f = nextShape(queue, gb.board)
 
+    if gameOver(f, gb.board):
+        raise SystemExit
+    
     pg.display.update()
 
     for event in pg.event.get():
