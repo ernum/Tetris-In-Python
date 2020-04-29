@@ -83,7 +83,7 @@ def gameOver(figure, matrix):
 tickRate = 1  # Times per second shapes are falling downwards
 
 tickCount = 1
-pos = [0, 0]
+
 queue = generateShapes.figureQueue(4, BLOCK_SIZE)
 f = nextShape(queue, gb.board)
 
@@ -95,12 +95,12 @@ while True:
     drawMatrix, collision = matrix_merge(gb.board, f)
     gb.drawMatrix(dis, drawMatrix)
 
+    if gameOver(f, gb.board):
+        raise SystemExit
+    
     if collision:
         gb.board = drawMatrix
         f = nextShape(queue, gb.board)
-
-    if gameOver(f, gb.board):
-        raise SystemExit
     
     pg.display.update()
 
