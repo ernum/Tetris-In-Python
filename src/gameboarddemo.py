@@ -3,8 +3,7 @@ import figure
 import gameboard
 import generateShapes
 import pygameTitleScreen
-import math
-
+import UI
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -80,6 +79,17 @@ pos = [0, 0]
 queue = generateShapes.figureQueue(4,BLOCK_SIZE)
 f = nextShape(queue,gb.board)
 
+sliderWidth = 20
+sliderHeight = 60
+sliderMargin = 20
+sliderRect = (width - sliderWidth - sliderMargin, height - sliderHeight - sliderMargin, sliderWidth, sliderHeight)
+
+volumeIconW = 40
+muteClickRadius = 20
+
+volume = UI.VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
+                          muteClickRadius)
+
 while True:
 
     dis.fill(BG_COLOR)
@@ -92,11 +102,23 @@ while True:
         f = nextShape(queue,gb.board)
 
 
+    volume.draw(dis)
     pg.display.update()
 
+    if pg.mouse.get_pressed()[0]:
+        if volume.update():
+            pg.mixer.music.set_volume(volume.val)
+            
     for event in pg.event.get():
+
+
         if event.type == pg.QUIT:
             raise SystemExit
+
+        if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+            p = pg.mouse.get_pos()
+            if volume.buttonInside(p):
+                volume.click()
 
         if event.type == pg.KEYDOWN:
 
