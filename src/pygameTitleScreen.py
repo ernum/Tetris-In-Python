@@ -30,6 +30,8 @@ def start():
 
 started = False
 
+def sqrDistance(p1,p2):
+    return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
 
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
@@ -125,6 +127,11 @@ def titlePage(dis):
         exitButton.draw(dis)
         title.draw(dis)
         volume.draw(dis)
+
+        if muted:
+            pg.draw.line(dis,(255,0,0),[i + (volumeIconW-crossLength)/2 for i in volumeIconPos],[i + crossLength + (volumeIconW-crossLength)/2 for i in volumeIconPos],crossWidth)
+            pg.draw.line(dis,(255,0,0),(volumeIconPos[0]+crossLength + (volumeIconW-crossLength)/2,volumeIconPos[1] + (volumeIconW-crossLength)/2),(volumeIconPos[0] + (volumeIconW-crossLength)/2,volumeIconPos[1] + crossLength + (volumeIconW-crossLength)/2),crossWidth)
+
 
         pg.display.update()
 
