@@ -1,6 +1,23 @@
+import time
+
 import pygame as pg
+from random import randint as ri
 
 fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
+
+white = (255, 255, 255)
+black = (0, 0, 0)
+yellow = (250, 250, 0)
+turq = (20, 250, 250)
+green = (0, 255, 0)
+red = (255, 0, 0)
+orange = (255, 150, 20)
+blue = (0, 0, 255)
+pink = (200, 20, 250)
+colors = [black, yellow, turq, green, red, orange, blue, pink, white]
+t = time.time()
+# do stuff
+elapsed = time.time() - t
 
 class Button:
     def __init__(self,rect,color,outlineWidth,outlineColor,text,textSize,textColor,onClickFunction,hoverColor):
@@ -44,7 +61,7 @@ class Text:
         self.color = color
         self.size = size
         self.font = pg.font.Font(fontPath,size)
-        self.rend = self.font.render(text,True,color)
+        self.rend = self.font.render(text,True, color)
         self.center = center
         self.textSize = self.rend.get_rect().size
         self.pos = (self.center[0] - self.textSize[0]/2, self.center[1]-self.textSize[1]/2)
@@ -52,7 +69,8 @@ class Text:
     def recalcPos(self):
         self.pos = (self.center[0] - self.textSize[0]/2, self.center[1]-self.textSize[1]/2)
 
-    def draw(self,dis):
+    def draw(self, dis):
+        self.rend = self.font.render("TETRIS", True, self.color)
         dis.blit(self.rend,self.pos)
 
 def exit():
@@ -63,6 +81,7 @@ def start():
     started = True
 
 started = False
+
 
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
@@ -81,13 +100,16 @@ def titlePage(dis):
     buttonHoverColor = (200,200,200)
 
     titleEndY = (h-buttonHeight)/2 - buttonHeight*1.5 - titleFontSize/2
-    title = Text("TETRIS",(255,255,255),titleFontSize,(w/2,titleStartY))
+    title = Text("TETRIS",(255, 255, 255),titleFontSize,(w/2,titleStartY))
 
     startButton = Button(((w-buttonWidth)/2-buttonWidth*0.6,(h-buttonHeight)/2, buttonWidth, buttonHeight),(255,255,255),0,(100,100,100),"START",buttonFontSize,(0,0,0),start,buttonHoverColor)
     exitButton = Button(((w-buttonWidth)/2+buttonWidth*0.6,(h-buttonHeight)/2, buttonWidth, buttonHeight),(255,255,255),0,(100,100,100),"EXIT",buttonFontSize,(0,0,0),exit, buttonHoverColor)
 
 
     clock = pg.time.Clock()
+    t = time.time()
+
+    colorIndex = 0
 
     while not started:
         dis.fill((0,0,0))
@@ -110,6 +132,14 @@ def titlePage(dis):
             exitButton.hover()
         else:
             exitButton.noHover()
+
+        if time.time() - t > 0.2:
+            rand = ri(1, len(colors) - 2)
+            while colorIndex == rand:
+                rand = ri(1, len(colors) - 2)
+            colorIndex = rand
+            title.color = colors[colorIndex]
+            t = time.time()
 
         # Title drop animation
         titleY = title.pos[1]
