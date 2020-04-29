@@ -3,6 +3,7 @@ import figure
 import gameboard
 import generateShapes
 import pygameTitleScreen
+import math
 
 
 BG_COLOR = (0, 0, 0)
@@ -30,38 +31,54 @@ start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      0, 18, 14, 20)
 
-f = figure.Figure((250, 250, 0), shapes[currentShapeNumber], start_pos, 20)
 
 
-def matrix_merge(board, figure):
+def matrix_merge(currentMatrix, figure):
     # Right now first pos of fig ([0]). Will need to get the right rotation as well.
     rotation = figure.currentRotation
-    fig_m = figure.shape_from_input(shapes[currentShapeNumber])[rotation]
-    board_matrix = board.board_matrix(board_rows, board_cols)
+    fig_m = figure.shapeList[rotation]
 
+    collisionFound = False
+    newMatrix = [[i for i in row] for row in currentMatrix]
     for j in range(len(fig_m[0])):
         for i in range(len(fig_m)):
             if fig_m[j][i] != 0:
                 row = j + figure.matrixPosY
-                column = i + int(len(board_matrix[0]) / 2) - 1 + figure.matrixPosX
-                board_matrix[row][column] = fig_m[j][i]
+                column = i  + figure.matrixPosX
+                under = currentMatrix[row+1][column]
+                if under != 0:
+                    collisionFound = True
+                newMatrix[row][column] = fig_m[j][i]
 
-    return board_matrix
+
+    return newMatrix, collisionFound
+
+def nextShape(queue, currentMatrix):
+    figure = queue.next()
+    fig_m = figure.shape_from_input(shapes[currentShapeNumber])[figure.currentRotation]
+    middle = len(currentMatrix[0])//2 - len(fig_m)//2
+    figure.matrixPosX = middle
+    return figure
 
 tickRate = 1  # Times per second shapes are falling downwards
-
 
 tickCount = 1
 pos = [0, 0]
 queue = generateShapes.figureQueue(4,BLOCK_SIZE)
+f = nextShape(queue,gb.board)
 
 while True:
 
     dis.fill(BG_COLOR)
     queue.draw(dis,width-90,0,90,200)
 
-    board_matrix = matrix_merge(gb, f)
-    gb.drawMatrix(dis, board_matrix)
+    drawMatrix, collision = matrix_merge(gb.board, f)
+    gb.drawMatrix(dis, drawMatrix)
+    if collision:
+        gb.board = drawMatrix
+        f = nextShape(queue,gb.board)
+
+
     pg.display.update()
 
     for event in pg.event.get():
@@ -69,8 +86,6 @@ while True:
             raise SystemExit
 
         if event.type == pg.KEYDOWN:
-
-            board_m = gb.board_matrix(board_rows, board_cols)
 
             # Controls
             if event.key == pg.K_x:

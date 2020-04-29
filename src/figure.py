@@ -157,6 +157,9 @@ class Figure:
                 'The shape {} does not exist.'.format(self.shapeList))
         return s
 
+    def checkCollision(self, matrix):
+        pass
+
     def rotate_clockwise(self):
         self.currentRotation = (self.currentRotation + 1) % 4
 
