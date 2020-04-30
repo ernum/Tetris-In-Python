@@ -22,7 +22,7 @@ BLOCK_SIZE = 20
 
 # Music
 pg.mixer.init()
-pg.mixer.music.load("../Sound/electrifyLowerTempDelayed.wav")
+pg.mixer.music.load("../Sound/noraprap (1).wav")
 pg.mixer.music.play(-1)
 pg.mixer.music.set_volume(0.6)
 
@@ -78,17 +78,27 @@ def gameOver(figure, matrix):
 
 # Checks the board matrix for full rows from the bottom.
 def row_check(currentMatrix):
-    temp = []
-
+    removed_index = []
     for r in range(len(currentMatrix)-2, -1, -1):
         full_rows = [True for n in range(len(currentMatrix[0])-2)]
         for k in range(1, len(currentMatrix[r])-1):
             if currentMatrix[r][k] == 0:
                 full_rows[k-1] = False
         if all(full_rows):
+            removed_index.append(r)
             currentMatrix[r][1:len(currentMatrix[0])-1] = [0 for n in range(len(currentMatrix[0])-2)]
-    return currentMatrix
+    return currentMatrix, removed_index
 
+
+# Removes empty row and updates the board
+def empty_row_removal(currentMatrix, removed_index):
+    for i in removed_index:
+        for r in range(removed_index[0], -1, -1):
+            if r == 0:
+                currentMatrix[r][1:len(currentMatrix[r]) - 1] = [0 for n in range(len(currentMatrix[0]) - 2)]
+            else:
+                currentMatrix[r] = currentMatrix[r - 1]
+    return currentMatrix
 
 def rotationCollision(figure,clockwise):
     if clockwise > 1:
@@ -171,7 +181,9 @@ while True:
             f.fall()
         else:
             gb.board = drawMatrix
-            gb.board = row_check(gb.board)
+            gb.board, removed_index = row_check(gb.board)
+            if len(removed_index) > 0:
+                gb.board = empty_row_removal(gb.board, removed_index)
             f = nextShape(queue, gb.board)
 
     for event in pg.event.get():
