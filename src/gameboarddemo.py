@@ -219,10 +219,7 @@ while True:
                 moveIfPossible(gb.board, f, (-1, 0))
                 lastPressed[0] = time.time()
             if event.key == pg.K_DOWN:
-                if not moveIfPossible(gb.board, f, (0, 1)):
-                    gb.board = drawMatrix
-                    gb.board = row_check(gb.board)
-                    f = nextShape(queue, gb.board)
+                moveIfPossible(gb.board, f, (0, 1))
                 lastPressed[1] = time.time()
             if event.key == pg.K_RIGHT:
                 moveIfPossible(gb.board, f, (1, 0))
@@ -239,10 +236,7 @@ while True:
             moveIfPossible(gb.board, f, (1, 0))
 
         if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
-            if not moveIfPossible(gb.board, f, (0, 1)):
-                gb.board = drawMatrix
-                gb.board = row_check(gb.board)
-                f = nextShape(queue, gb.board)
+            moveIfPossible(gb.board, f, (0, 1))
 
     clock.tick(FPS)
     tickCount += 1
