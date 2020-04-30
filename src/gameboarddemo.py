@@ -4,6 +4,7 @@ import gameboard
 import generateShapes
 import pygameTitleScreen
 import UI
+import time
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -42,12 +43,9 @@ def matrix_merge(currentMatrix, figure):
             if fig_m[j][i] != 0:
                 row = j + figure.matrixPosY
                 column = i + figure.matrixPosX
-                under = currentMatrix[row+1][column]
-                if under != 0:
-                    collisionFound = True
                 newMatrix[row][column] = fig_m[j][i]
 
-    return newMatrix, collisionFound
+    return newMatrix
 
 
 def checkCollision(currentMatrix, figure, movement, rotation):
@@ -78,9 +76,41 @@ def gameOver(figure, matrix):
             return True
     return False
 
+def rotationCollision(figure,clockwise):
+    if clockwise > 1:
+        if f.shape != 'I':
+            movements = [[(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 0 >> 1
+                         [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],  # 1 >> 2
+                         [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 2 >> 3
+                         [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 0
+        else:
+            movements = [[(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)],  # 0 >> 1
+                         [(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)],  # 1 >> 2
+                         [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)],  # 2 >> 3
+                         [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)]]  # 3 >> 0
+    else:
+        if f.shape != 'I':
+            movements = [[(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 0 >> 3
+                         [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],  # 1 >> 0
+                         [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 2 >> 1
+                         [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 2
+        else:
+            movements = [[(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)],  # 0 >> 3
+                         [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)],  # 1 >> 0
+                         [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)],  # 2 >> 1
+                         [(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)]]  # 3 >> 2
 
+    # Test movements
+    for i in movements[f.currentRotation]:
+        if not checkCollision(gb.board, f, i, 1 if clockwise else -1):
+            f.rotate_clockwise() if clockwise else f.rotate_anticlockwise()
+            f.move(i)
+            break
+
+def moveIfPossible(board, f, move):
+    if not checkCollision(board,f,move,0):
+        f.move(move)
 tickRate = 1  # Times per second shapes are falling downwards
-
 tickCount = 1
 
 queue = generateShapes.figureQueue(4, BLOCK_SIZE)
@@ -100,21 +130,20 @@ volume = UI.VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, 
 volume.val = pg.mixer.music.get_volume()
 volume.muted = pygameTitleScreen.muted
 
+keyCheckRate = 20 # How many times per second the game checks if a key is held down
+das = 0.2 # delayed auto shift, how long after pressing a key it will be checked again. In seconds
+
+lastPressed = [0, 0, 0] #Left, Down, Right
 
 while True:
-
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
 
-    drawMatrix, collision = matrix_merge(gb.board, f)
+    drawMatrix = matrix_merge(gb.board, f)
     gb.drawMatrix(dis, drawMatrix)
 
     if gameOver(f, gb.board):
         raise SystemExit
-    
-    if collision:
-        gb.board = drawMatrix
-        f = nextShape(queue, gb.board)
 
     volume.draw(dis)
     pg.display.update()
@@ -122,10 +151,15 @@ while True:
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
-            
+
+    if tickCount % (FPS//tickRate) == 0:
+        if not checkCollision(gb.board, f, (0,1), 0):
+            f.fall()
+        else:
+            gb.board = drawMatrix
+            f = nextShape(queue, gb.board)
+
     for event in pg.event.get():
-
-
         if event.type == pg.QUIT:
             raise SystemExit
 
@@ -137,81 +171,32 @@ while True:
         if event.type == pg.KEYDOWN:
             # Controls
             if event.key == pg.K_x:
-                if f.shape != 'I':
-                    movements = [[(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 0 >> 1
-                                 [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],  # 1 >> 2
-                                 [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 2 >> 3
-                                 [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 0
-                else:
-                    movements = [[(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)], # 0 >> 1                   
-                                 [(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)], # 1 >> 2
-                                 [(0, 0), (2, 0), (-1, 0), (2, 1), (-1,-2)],  # 2 >> 3
-                                 [( 0, 0), (1, 0), (-2, 0), (1,-2), (-2, 1)]] # 3 >> 0
-                # Test movements
-                for i in movements[f.currentRotation]:
-                    if not checkCollision(gb.board, f, i, 1):
-                        f.rotate_clockwise()
-                        f.move(i)
-                        break
-
+                rotationCollision(f,True)
             if event.key == pg.K_z:
-                if f.shape != 'I':
-                    movements = [[(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 0 >> 3
-                                 [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)], # 1 >> 0
-                                 [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 2 >> 1
-                                 [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 2
-                else:
-                    movements = [[(0, 0), (-1, 0), (2, 0), (-1, 2), (2,-1)],  # 0 >> 3
-                                 [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)], # 1 >> 0
-                                 [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)],  # 2 >> 1
-                                 [(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)]]   # 3 >> 2
-                # Test movements
-                for i in movements[f.currentRotation]:
-                    if not checkCollision(gb.board, f, i, -1):
-                        f.rotate_anticlockwise()
-                        f.move(i)
-                        break
+                rotationCollision(f,False)
 
             if event.key == pg.K_LEFT:
-                if not checkCollision(gb.board, f, (-1, 0), 0):
-                    f.move_left()
-            if event.key == pg.K_RIGHT:
-                if not checkCollision(gb.board, f, (1, 0), 0):
-                    f.move_right()
+                moveIfPossible(gb.board, f, (-1, 0))
+                lastPressed[0] = time.time()
             if event.key == pg.K_DOWN:
-                f.move_down()
+                moveIfPossible(gb.board, f, (0, 1))
+                lastPressed[1] = time.time()
+            if event.key == pg.K_RIGHT:
+                moveIfPossible(gb.board, f, (1, 0))
+                lastPressed[2] = time.time()
 
-            # Demo content
-            if event.key == pg.K_1:
-                currentShapeNumber = 0
-                f = figure.Figure(
-                    (250, 250, 0), shapes[currentShapeNumber], (f.posX, f.posY), 20)
-            elif event.key == pg.K_2:
-                currentShapeNumber = 1
-                f = figure.Figure(
-                    (20, 250, 250), shapes[currentShapeNumber], (f.posX, f.posY), 20)
-            elif event.key == pg.K_3:
-                currentShapeNumber = 2
-                f = figure.Figure(
-                    (0, 255, 0), shapes[currentShapeNumber], (f.posX, f.posY), 20)
-            elif event.key == pg.K_4:
-                currentShapeNumber = 3
-                f = figure.Figure(
-                    (255, 0, 0), shapes[currentShapeNumber], (f.posX, f.posY), 20)
-            elif event.key == pg.K_5:
-                currentShapeNumber = 4
-                f = figure.Figure(
-                    (255, 150, 20), shapes[currentShapeNumber], (f.posX, f.posY), 20)
-            elif event.key == pg.K_6:
-                currentShapeNumber = 5
-                f = figure.Figure(
-                    (0, 0, 255), shapes[currentShapeNumber], (f.posX, f.posY), 20)
-            elif event.key == pg.K_7:
-                currentShapeNumber = 6
-                f = figure.Figure(
-                    (200, 20, 250), shapes[currentShapeNumber], (f.posX, f.posY), 20)
+    pressed = pg.key.get_pressed()
 
-    if tickCount % (FPS/tickRate) == 0:
-        f.fall()
+    t = time.time()
+    if tickCount % (FPS//keyCheckRate) == 0:
+        if pressed[pg.K_LEFT] and t-lastPressed[0] >= das:
+            moveIfPossible(gb.board, f, (-1, 0))
+
+        if pressed[pg.K_RIGHT] and t-lastPressed[2] >= das:
+            moveIfPossible(gb.board, f, (1, 0))
+
+        if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
+            moveIfPossible(gb.board, f, (0, 1))
+
     clock.tick(FPS)
     tickCount += 1
