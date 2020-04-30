@@ -221,7 +221,7 @@ while True:
             if event.key == pg.K_DOWN:
                 if not moveIfPossible(gb.board, f, (0, 1)):
                     gb.board = drawMatrix
-                    gb.board = row_check(gb.board)
+                    gb.board, removed_index = row_check(gb.board)
                     f = nextShape(queue, gb.board)
                 lastPressed[1] = time.time()
             if event.key == pg.K_RIGHT:
@@ -241,7 +241,7 @@ while True:
         if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
             if not moveIfPossible(gb.board, f, (0, 1)):
                 gb.board = drawMatrix
-                gb.board = row_check(gb.board)
+                gb.board, removed_index = row_check(gb.board)
                 f = nextShape(queue, gb.board)
 
     clock.tick(FPS)
