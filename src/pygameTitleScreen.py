@@ -38,6 +38,12 @@ def titlePage(dis):
     pg.display.set_caption("TETRIS")
     icon = pg.image.load("../images/tetrisIcon2.png")
 
+    keyImage = pg.image.load("../images/keys.png")
+    keyWidth = 300
+    keyRect = keyImage.get_rect()
+    keyHeight = int(keyWidth * keyRect.height/keyRect.width)
+    keyImage = pg.transform.scale(keyImage,(keyWidth,keyHeight))
+
     pg.display.set_icon(icon)
 
     w,h = dis.get_rect().size
@@ -71,6 +77,10 @@ def titlePage(dis):
     t = time.time()
 
     colorIndex = 0
+
+    pauseText = Text("PAUSE",(255,255,255),26,(sliderMargin + 95,h-keyHeight-sliderMargin + 27))
+    rotationText = Text("ROTATE",(255,255,255),26,(sliderMargin + 55,h-keyHeight-sliderMargin + 77))
+    moveText = Text("MOVE",(255,255,255),26,(sliderMargin + 295,h-keyHeight-sliderMargin + 77))
 
     while not started:
         dis.fill((0,0,0))
@@ -130,6 +140,10 @@ def titlePage(dis):
         exitButton.draw(dis)
         title.draw(dis)
         volume.draw(dis)
+        dis.blit(keyImage,(sliderMargin,h-keyHeight-sliderMargin + 7))
+        pauseText.draw(dis)
+        moveText.draw(dis)
+        rotationText.draw(dis)
 
         pg.display.update()
 
