@@ -36,7 +36,6 @@ def matrix_merge(currentMatrix, figure):
     rotation = figure.currentRotation
     fig_m = figure.shapeList[rotation]
 
-    collisionFound = False
     newMatrix = [[i for i in row] for row in currentMatrix]
     for j in range(len(fig_m[0])):
         for i in range(len(fig_m)):
@@ -124,6 +123,17 @@ def rotationCollision(figure,clockwise):
 def moveIfPossible(board, f, move):
     if not checkCollision(board,f,move,0):
         f.move(move)
+        return True
+    return False
+
+def drawGhost(board, drawMatrix, figure):
+    for down in range(1,len(board)):
+        if checkCollision(board,figure,(0,down),0):
+            ghost = figure.ghostCopy()
+            ghost.move((0,down-1))
+            newMatrix = matrix_merge(drawMatrix,ghost)
+            return newMatrix
+
 tickRate = 1  # Times per second shapes are falling downwards
 tickCount = 1
 
@@ -154,7 +164,8 @@ while True:
     queue.draw(dis, width-90, 0, 90, 200)
 
     drawMatrix = matrix_merge(gb.board, f)
-    gb.drawMatrix(dis, drawMatrix)
+    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+    gb.drawMatrix(dis, ghostMatrix)
 
     if gameOver(f, gb.board):
         raise SystemExit
@@ -194,7 +205,10 @@ while True:
                 moveIfPossible(gb.board, f, (-1, 0))
                 lastPressed[0] = time.time()
             if event.key == pg.K_DOWN:
-                moveIfPossible(gb.board, f, (0, 1))
+                if not moveIfPossible(gb.board, f, (0, 1)):
+                    gb.board = drawMatrix
+                    gb.board = row_check(gb.board)
+                    f = nextShape(queue, gb.board)
                 lastPressed[1] = time.time()
             if event.key == pg.K_RIGHT:
                 moveIfPossible(gb.board, f, (1, 0))
@@ -211,7 +225,10 @@ while True:
             moveIfPossible(gb.board, f, (1, 0))
 
         if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
-            moveIfPossible(gb.board, f, (0, 1))
+            if not moveIfPossible(gb.board, f, (0, 1)):
+                gb.board = drawMatrix
+                gb.board = row_check(gb.board)
+                f = nextShape(queue, gb.board)
 
     clock.tick(FPS)
     tickCount += 1
