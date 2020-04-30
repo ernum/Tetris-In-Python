@@ -16,7 +16,7 @@ clock = pg.time.Clock()
 shapes = ["O", "I", "S", "Z", "L", "J", "T"]
 currentShapeNumber = 0
 board_rows = 18
-board_cols = 14
+board_cols = 12
 
 BLOCK_SIZE = 20
 
@@ -29,10 +29,10 @@ pg.mixer.music.set_volume(0.6)
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
-                     0, 18, 14, 20)
+                     0, board_rows, board_cols, 20)
+
 
 def matrix_merge(currentMatrix, figure):
-    # Right now first pos of fig ([0]). Will need to get the right rotation as well.
     rotation = figure.currentRotation
     fig_m = figure.shapeList[rotation]
 
@@ -49,7 +49,6 @@ def matrix_merge(currentMatrix, figure):
 
 
 def checkCollision(currentMatrix, figure, movement, rotation):
-    # Right now first pos of fig ([0]). Will need to get the right rotation as well.
     fig_m = figure.shapeList[(figure.currentRotation + rotation) % 4]
 
     for j in range(len(fig_m[0])):
@@ -69,12 +68,27 @@ def nextShape(queue, currentMatrix):
     figure.matrixPosX = middle
     return figure
 
+
 def gameOver(figure, matrix):
     top_row = [a for a in matrix[0]]
     for i in top_row:
         if i != 0 and i != 8:
             return True
     return False
+
+# Checks the board matrix for full rows from the bottom.
+def row_check(currentMatrix):
+    temp = []
+
+    for r in range(len(currentMatrix)-2, -1, -1):
+        full_rows = [True for n in range(len(currentMatrix[0])-2)]
+        for k in range(1, len(currentMatrix[r])-1):
+            if currentMatrix[r][k] == 0:
+                full_rows[k-1] = False
+        if all(full_rows):
+            currentMatrix[r][1:len(currentMatrix[0])-1] = [0 for n in range(len(currentMatrix[0])-2)]
+    return currentMatrix
+
 
 def rotationCollision(figure,clockwise):
     if clockwise > 1:
@@ -157,6 +171,7 @@ while True:
             f.fall()
         else:
             gb.board = drawMatrix
+            gb.board = row_check(gb.board)
             f = nextShape(queue, gb.board)
 
     for event in pg.event.get():
