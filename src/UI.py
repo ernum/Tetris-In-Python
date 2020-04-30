@@ -86,7 +86,7 @@ class Text:
         self.pos = (self.center[0] - self.textSize[0]/2, self.center[1]-self.textSize[1]/2)
 
     def draw(self, dis):
-        self.rend = self.font.render("TETRIS", True, self.color)
+        self.rend = self.font.render(self.text, True, self.color)
         dis.blit(self.rend,self.pos)
 
 class VolumeController:
