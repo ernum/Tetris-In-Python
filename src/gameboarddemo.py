@@ -42,7 +42,9 @@ def matrix_merge(currentMatrix, figure):
             if fig_m[j][i] != 0:
                 row = j + figure.matrixPosY
                 column = i + figure.matrixPosX
-                newMatrix[row][column] = fig_m[j][i]
+                current = newMatrix[row][column]
+                if current == 0:
+                    newMatrix[row][column] = fig_m[j][i]
 
     return newMatrix
 
