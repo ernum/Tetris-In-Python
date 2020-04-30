@@ -110,7 +110,7 @@ def rotationCollision(figure,clockwise):
 def moveIfPossible(board, f, move):
     if not checkCollision(board,f,move,0):
         f.move(move)
-tickRate = 2  # Times per second shapes are falling downwards
+tickRate = 1  # Times per second shapes are falling downwards
 tickCount = 1
 
 queue = generateShapes.figureQueue(4, BLOCK_SIZE)
