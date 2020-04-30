@@ -22,9 +22,9 @@ red_img = pg.image.load("../images/red.png")
 orange_img = pg.image.load("../images/orange.png")
 blue_img = pg.image.load("../images/blue.png")
 pink_img = pg.image.load("../images/pink.png")
+ghost_img = pg.image.load("../images/ghost.png")
 
-images = [yel_img, turq_img, green_img, red_img, orange_img, blue_img, pink_img]
-
+images = [yel_img, turq_img, green_img, red_img, orange_img, blue_img, pink_img, walls_img, ghost_img]
 class Board:
     """ Game board represented as a nxm matrix
     with borders as number n (n will give which type of block the wall is). Ex:
@@ -55,33 +55,14 @@ class Board:
     def drawMatrix(self, window, matrix):
         for column in range(len(matrix[0])):
             for row in range(len(matrix)):
-                pg.draw.rect(window, (111, 111, 111),
-                             pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
-                                      self.posY + row * self.blockSize + row * margin - 1), (margin, 21)))
-                pg.draw.rect(window, (111, 111, 111),
-                             pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
-                                      self.posY + row * self.blockSize + row * margin - 1), (20, margin)))
-                if matrix[row][column] == 8:
-                    window.blit(walls_img, (self.posX + self.blockSize * column + margin * column,
+                number = matrix[row][column]
+                if number == 0:
+                    pg.draw.rect(window, (111, 111, 111),
+                                 pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
+                                          self.posY + row * self.blockSize + row * margin - 1), (margin, 21)))
+                    pg.draw.rect(window, (111, 111, 111),
+                                 pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
+                                          self.posY + row * self.blockSize + row * margin - 1), (20, margin)))
+                else:
+                    window.blit(images[number-1], (self.posX + self.blockSize * column + margin * column,
                                             self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 1:
-                    window.blit(yel_img, (self.posX + self.blockSize * column + margin * column,
-                                          self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 2:
-                    window.blit(turq_img, (self.posX + self.blockSize * column + margin * column,
-                                           self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 3:
-                    window.blit(green_img, (self.posX + self.blockSize * column + margin * column,
-                                            self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 4:
-                    window.blit(red_img, (self.posX + self.blockSize * column + margin * column,
-                                          self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 5:
-                    window.blit(orange_img, (self.posX + self.blockSize * column + margin * column,
-                                             self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 6:
-                    window.blit(blue_img, (self.posX + self.blockSize * column + margin * column,
-                                           self.posY + row * self.blockSize + row * margin))
-                elif matrix[row][column] == 7:
-                    window.blit(pink_img, (self.posX + self.blockSize * column + margin * column,
-                                           self.posY + row * self.blockSize + row * margin))
