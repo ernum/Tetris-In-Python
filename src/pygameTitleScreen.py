@@ -2,6 +2,7 @@ import time
 
 import pygame as pg
 from random import randint as ri
+from UI import *
 
 fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
 
@@ -19,93 +20,7 @@ t = time.time()
 # do stuff
 elapsed = time.time() - t
 
-
-class Button:
-    def __init__(self,rect,color,outlineWidth,outlineColor,text,textSize,textColor,onClickFunction,hoverColor):
-        self.color = color
-        self.currentColor = color
-        self.hoverColor = hoverColor
-        self.outlineWidth = outlineWidth
-        self.outlineColor = outlineColor
-        self.x, self.y, self.w, self.h = rect
-        self.onClickFunction = onClickFunction
-        self.text = text
-        self.textSize = textSize
-        self.textColor = textColor
-
-
-    def isInside(self,pos):
-        x, y = pos
-        return x >= self.x and x <= self.x + self.w and y >= self.y and y <= self.y + self.h
-
-    def click(self):
-        self.onClickFunction()
-
-    def hover(self):
-        self.currentColor = self.hoverColor
-
-    def noHover(self):
-        self.currentColor = self.color
-
-    def draw(self,dis):
-        pg.draw.rect(dis,self.outlineColor,(self.x,self.y,self.w,self.h))
-        pg.draw.rect(dis, self.currentColor, (self.x + self.outlineWidth, self.y + self.outlineWidth, self.w - 2*self.outlineWidth, self.h - 2*self.outlineWidth))
-        font = pg.font.Font(fontPath,self.textSize)
-        rend = font.render(self.text,True,self.textColor)
-        textSize = rend.get_rect().size
-        dis.blit(rend,(self.x + self.w/2 - textSize[0]/2,self.y + self.h/2 - textSize[1]/2))
-
-class Slider:
-    def __init__(self,rect,vertical, valFrom, valTo, valStart):
-        self.x, self.y, self.w, self.h = rect
-        self.vertical = vertical
-        self.val = valStart
-        self.valFrom = valFrom
-        self.valTo = valTo
-
-    def draw(self,dis):
-        if self.vertical:
-            pg.draw.rect(dis,(255,255,255),(self.x,self.y,self.w,self.h),2)
-            sliderH = (self.val-self.valFrom)/(self.valTo-self.valFrom) * self.h
-            pg.draw.rect(dis,(255,255,255),(self.x,self.y+self.h-sliderH,self.w,sliderH))
-        else:
-            pg.draw.rect(dis,(255,255,255),(self.x,self.y,self.w,self.h),2)
-            sliderW = (self.val-self.valFrom)/(self.valTo-self.valFrom) * self.w
-            pg.draw.rect(dis,(255,255,255),(self.x,self.y,sliderW,self.h))
-
-    def isInside(self,pos):
-        x, y = pos
-        return x >= self.x and x <= self.x + self.w and y >= self.y and y <= self.y + self.h
-
-    def update(self):
-        p = pg.mouse.get_pos()
-        if self.isInside(p):
-            if self.vertical:
-                newVal = (self.y+self.h-p[1]) / self.h
-                self.val = newVal
-            else:
-                newVal = (p[0]-(self.x)) / self.w
-                self.val = newVal
-            return True
-        return False
-
-class Text:
-    def __init__(self,text,color,size,center):
-        self.text = text
-        self.color = color
-        self.size = size
-        self.font = pg.font.Font(fontPath,size)
-        self.rend = self.font.render(text,True, color)
-        self.center = center
-        self.textSize = self.rend.get_rect().size
-        self.pos = (self.center[0] - self.textSize[0]/2, self.center[1]-self.textSize[1]/2)
-
-    def recalcPos(self):
-        self.pos = (self.center[0] - self.textSize[0]/2, self.center[1]-self.textSize[1]/2)
-
-    def draw(self, dis):
-        self.rend = self.font.render("TETRIS", True, self.color)
-        dis.blit(self.rend,self.pos)
+muted = False
 
 def exit():
     raise SystemExit
@@ -116,11 +31,12 @@ def start():
 
 started = False
 
+def sqrDistance(p1,p2):
+    return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
 
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
     icon = pg.image.load("../images/tetrisIcon2.png")
-    volumeImage = pg.image.load("../images/volume.png")
 
     pg.display.set_icon(icon)
 
@@ -139,10 +55,7 @@ def titlePage(dis):
     sliderRect = (w-sliderWidth-sliderMargin,h-sliderHeight-sliderMargin,sliderWidth,sliderHeight)
 
     volumeIconW = 40
-    volumeIconPos = (sliderRect[0]-volumeIconW-10,sliderRect[1] + sliderRect[3]//2 - volumeIconW//2)
-
-    volumeSlider = Slider(sliderRect,True,0,1,0.5)
-    volumeImage = pg.transform.scale(volumeImage,(volumeIconW,volumeIconW))
+    muteClickRadius = 20
 
     buttonHoverColor = (200,200,200)
 
@@ -152,6 +65,7 @@ def titlePage(dis):
     startButton = Button(((w-buttonWidth)/2-buttonWidth*0.6,(h-buttonHeight)/2, buttonWidth, buttonHeight),(255,255,255),0,(100,100,100),"START",buttonFontSize,(0,0,0),start,buttonHoverColor)
     exitButton = Button(((w-buttonWidth)/2+buttonWidth*0.6,(h-buttonHeight)/2, buttonWidth, buttonHeight),(255,255,255),0,(100,100,100),"EXIT",buttonFontSize,(0,0,0),exit, buttonHoverColor)
 
+    volume = VolumeController(sliderRect,(sliderRect[0]-volumeIconW/2 - 10,sliderRect[1]+sliderRect[3]/2),muteClickRadius)
 
     clock = pg.time.Clock()
     t = time.time()
@@ -165,10 +79,16 @@ def titlePage(dis):
                 raise SystemExit
 
             if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                if startButton.isInside(pg.mouse.get_pos()):
+                p = pg.mouse.get_pos()
+                if startButton.isInside(p):
                     startButton.click()
-                if exitButton.isInside(pg.mouse.get_pos()):
+                    global muted
+                    muted = volume.muted
+                if exitButton.isInside(p):
                     exitButton.click()
+
+                if volume.buttonInside(p):
+                    volume.click()
 
         if startButton.isInside(pg.mouse.get_pos()):
             startButton.hover()
@@ -181,8 +101,8 @@ def titlePage(dis):
             exitButton.noHover()
 
         if pg.mouse.get_pressed()[0]:
-            if volumeSlider.update():
-                pg.mixer.music.set_volume(volumeSlider.val)
+            if volume.update():
+                pg.mixer.music.set_volume(volume.val)
 
         if time.time() - t > 0.2:
             rand = ri(1, len(colors) - 2)
@@ -209,8 +129,7 @@ def titlePage(dis):
         startButton.draw(dis)
         exitButton.draw(dis)
         title.draw(dis)
-        volumeSlider.draw(dis)
-        dis.blit(volumeImage,volumeIconPos)
+        volume.draw(dis)
 
         pg.display.update()
 

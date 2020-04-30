@@ -3,8 +3,9 @@ from gameboard import images
 
 
 def drawRect(display, imageNumber, x, y, w):
-    image = pg.transform.scale(images[imageNumber-1], (w,w))
-    display.blit(image,(x,y,w,w))
+    image = pg.transform.scale(images[imageNumber-1], (w, w))
+    display.blit(image, (x, y, w, w))
+
 
 class Figure:
     """ This class can be used to generate a figure.
@@ -15,12 +16,7 @@ class Figure:
     O = [[[1, 1],
           [1, 1]]] * 4
 
-    I = [[[0, 2, 0, 0],
-          [0, 2, 0, 0],
-          [0, 2, 0, 0],
-          [0, 2, 0, 0]],
-
-         [[0, 0, 0, 0],
+    I = [[[0, 0, 0, 0],
           [2, 2, 2, 2],
           [0, 0, 0, 0],
           [0, 0, 0, 0]],
@@ -33,7 +29,12 @@ class Figure:
          [[0, 0, 0, 0],
           [0, 0, 0, 0],
           [2, 2, 2, 2],
-          [0, 0, 0, 0]]]
+          [0, 0, 0, 0]],
+
+         [[0, 2, 0, 0],
+          [0, 2, 0, 0],
+          [0, 2, 0, 0],
+          [0, 2, 0, 0]]]
 
     S = [[[0, 3, 3],
           [3, 3, 0],
@@ -67,7 +68,11 @@ class Figure:
           [4, 4, 0],
           [4, 0, 0]]]
 
-    L = [[[0, 5, 0],
+    L = [[[0, 0, 5],
+          [5, 5, 5],
+          [0, 0, 0]],
+
+         [[0, 5, 0],
           [0, 5, 0],
           [0, 5, 5]],
 
@@ -77,17 +82,9 @@ class Figure:
 
          [[5, 5, 0],
           [0, 5, 0],
-          [0, 5, 0]],
+          [0, 5, 0]]]
 
-         [[0, 0, 5],
-          [5, 5, 5],
-          [0, 0, 0]]]
-
-    J = [[[0, 6, 0],
-          [0, 6, 0],
-          [6, 6, 0]],
-
-         [[6, 0, 0],
+    J = [[[6, 0, 0],
           [6, 6, 6],
           [0, 0, 0]],
 
@@ -97,22 +94,26 @@ class Figure:
 
          [[0, 0, 0],
           [6, 6, 6],
-          [0, 0, 6]]]
+          [0, 0, 6]],
 
-    T = [[[0, 0, 0],
-          [7, 7, 7],
-          [0, 7, 0]],
+         [[0, 6, 0],
+          [0, 6, 0],
+          [6, 6, 0]]]
 
-         [[0, 7, 0],
-          [7, 7, 0],
-          [0, 7, 0]],
-
-         [[0, 7, 0],
+    T = [[[0, 7, 0],
           [7, 7, 7],
           [0, 0, 0]],
 
          [[0, 7, 0],
           [0, 7, 7],
+          [0, 7, 0]],
+
+         [[0, 0, 0],
+          [7, 7, 7],
+          [0, 7, 0]],
+
+         [[0, 7, 0],
+          [7, 7, 0],
           [0, 7, 0]]]
 
     def __init__(self, colour, shape, startPos, blockSize):
@@ -135,11 +136,20 @@ class Figure:
                     break
 
     def copy(self):
-        return Figure(self.colour,self.shape,(self.posX,self.posY),self.blockSize)
+        return Figure(self.colour, self.shape, (self.posX, self.posY), self.blockSize)
 
     def fall(self):
         self.posY += self.blockSize
         self.matrixPosY += 1
+
+    def move(self,dist):
+        xMove, yMove = dist
+
+        self.matrixPosX += xMove
+        self.posX += xMove * self.blockSize
+
+        self.matrixPosY += yMove
+        self.posY += yMove * self.blockSize
 
     def shape_from_input(self, shape):
         s = {
@@ -160,6 +170,9 @@ class Figure:
     def checkCollision(self, matrix):
         pass
 
+    def change_rotation(self, rotation):
+        return self.shapeList[rotation]
+        
     def rotate_clockwise(self):
         self.currentRotation = (self.currentRotation + 1) % 4
 
@@ -178,6 +191,9 @@ class Figure:
         self.posY += self.blockSize
         self.matrixPosY += 1
 
+    def move_up(self):
+        self.posY += self.blockSize
+        self.matrixPosY += 1
 
     def fall(self):
         self.posY += self.blockSize
@@ -191,4 +207,3 @@ class Figure:
                 if element:
                     drawRect(window, self.imageNumber, self.posX + x * self.blockSize,
                              self.posY + y * self.blockSize, self.blockSize)
-

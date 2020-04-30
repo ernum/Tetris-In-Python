@@ -3,8 +3,7 @@ import figure
 import gameboard
 import generateShapes
 import pygameTitleScreen
-import math
-
+import UI
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -31,8 +30,6 @@ start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      0, 18, 14, 20)
 
-
-
 def matrix_merge(currentMatrix, figure):
     # Right now first pos of fig ([0]). Will need to get the right rotation as well.
     rotation = figure.currentRotation
@@ -52,6 +49,7 @@ def matrix_merge(currentMatrix, figure):
 
     return newMatrix, collisionFound
 
+
 def checkCollision(currentMatrix, figure, movement, rotation):
     # Right now first pos of fig ([0]). Will need to get the right rotation as well.
     fig_m = figure.shapeList[(figure.currentRotation + rotation) % 4]
@@ -65,7 +63,7 @@ def checkCollision(currentMatrix, figure, movement, rotation):
                 if nextBlock != 0:
                     return True
     return False
-
+  
 def nextShape(queue, currentMatrix):
     figure = queue.next()
     fig_m = figure.shape_from_input(shapes[currentShapeNumber])[figure.currentRotation]
@@ -73,43 +71,112 @@ def nextShape(queue, currentMatrix):
     figure.matrixPosX = middle
     return figure
 
+def gameOver(figure, matrix):
+    top_row = [a for a in matrix[0]]
+    for i in top_row:
+        if i != 0 and i != 8:
+            return True
+    return False
+
+
 tickRate = 1  # Times per second shapes are falling downwards
 
 tickCount = 1
-pos = [0, 0]
-queue = generateShapes.figureQueue(4,BLOCK_SIZE)
-f = nextShape(queue,gb.board)
+
+queue = generateShapes.figureQueue(4, BLOCK_SIZE)
+f = nextShape(queue, gb.board)
+
+sliderWidth = 20
+sliderHeight = 60
+sliderMargin = 20
+sliderRect = (width - sliderWidth - sliderMargin, height - sliderHeight - sliderMargin, sliderWidth, sliderHeight)
+
+volumeIconW = 40
+muteClickRadius = 20
+
+volume = UI.VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
+                          muteClickRadius)
+
+volume.val = pg.mixer.music.get_volume()
+volume.muted = pygameTitleScreen.muted
+
 
 while True:
 
     dis.fill(BG_COLOR)
-    queue.draw(dis,width-90,0,90,200)
+    queue.draw(dis, width-90, 0, 90, 200)
 
     drawMatrix, collision = matrix_merge(gb.board, f)
     gb.drawMatrix(dis, drawMatrix)
+
+    if gameOver(f, gb.board):
+        raise SystemExit
+    
     if collision:
         gb.board = drawMatrix
-        f = nextShape(queue,gb.board)
+        f = nextShape(queue, gb.board)
 
-
+    volume.draw(dis)
     pg.display.update()
 
+    if pg.mouse.get_pressed()[0]:
+        if volume.update():
+            pg.mixer.music.set_volume(volume.val)
+            
     for event in pg.event.get():
+
+
         if event.type == pg.QUIT:
             raise SystemExit
 
-        if event.type == pg.KEYDOWN:
+        if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+            p = pg.mouse.get_pos()
+            if volume.buttonInside(p):
+                volume.click()
 
+        if event.type == pg.KEYDOWN:
             # Controls
             if event.key == pg.K_x:
-                f.rotate_clockwise()
+                if f.shape != 'I':
+                    movements = [[(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 0 >> 1
+                                 [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],  # 1 >> 2
+                                 [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 2 >> 3
+                                 [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 0
+                else:
+                    movements = [[(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)], # 0 >> 1                   
+                                 [(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)], # 1 >> 2
+                                 [(0, 0), (2, 0), (-1, 0), (2, 1), (-1,-2)],  # 2 >> 3
+                                 [( 0, 0), (1, 0), (-2, 0), (1,-2), (-2, 1)]] # 3 >> 0
+                # Test movements
+                for i in movements[f.currentRotation]:
+                    if not checkCollision(gb.board, f, i, 1):
+                        f.rotate_clockwise()
+                        f.move(i)
+                        break
+
             if event.key == pg.K_z:
-                f.rotate_anticlockwise()
+                if f.shape != 'I':
+                    movements = [[(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 0 >> 3
+                                 [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)], # 1 >> 0
+                                 [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 2 >> 1
+                                 [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 2
+                else:
+                    movements = [[(0, 0), (-1, 0), (2, 0), (-1, 2), (2,-1)],  # 0 >> 3
+                                 [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)], # 1 >> 0
+                                 [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)],  # 2 >> 1
+                                 [(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)]]   # 3 >> 2
+                # Test movements
+                for i in movements[f.currentRotation]:
+                    if not checkCollision(gb.board, f, i, -1):
+                        f.rotate_anticlockwise()
+                        f.move(i)
+                        break
+
             if event.key == pg.K_LEFT:
-                if not checkCollision(gb.board,f,(-1,0),0):
+                if not checkCollision(gb.board, f, (-1, 0), 0):
                     f.move_left()
             if event.key == pg.K_RIGHT:
-                if not checkCollision(gb.board,f,(1,0),0):
+                if not checkCollision(gb.board, f, (1, 0), 0):
                     f.move_right()
             if event.key == pg.K_DOWN:
                 f.move_down()
@@ -118,15 +185,15 @@ while True:
             if event.key == pg.K_1:
                 currentShapeNumber = 0
                 f = figure.Figure(
-                    (250, 250, 0), shapes[currentShapeNumber], (f.posX,f.posY), 20)
+                    (250, 250, 0), shapes[currentShapeNumber], (f.posX, f.posY), 20)
             elif event.key == pg.K_2:
                 currentShapeNumber = 1
                 f = figure.Figure(
-                    (20, 250, 250), shapes[currentShapeNumber], (f.posX,f.posY), 20)
+                    (20, 250, 250), shapes[currentShapeNumber], (f.posX, f.posY), 20)
             elif event.key == pg.K_3:
                 currentShapeNumber = 2
                 f = figure.Figure(
-                    (0, 255, 0), shapes[currentShapeNumber], (f.posX,f.posY), 20)
+                    (0, 255, 0), shapes[currentShapeNumber], (f.posX, f.posY), 20)
             elif event.key == pg.K_4:
                 currentShapeNumber = 3
                 f = figure.Figure(
