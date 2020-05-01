@@ -206,16 +206,15 @@ while True:
         playAgain = True
         gameOverFontSize = 100
         gameOverStartY = -gameOverFontSize
-        w, h = dis.get_rect().size
+        gameOver = Text("Game Over", (250, 250, 250),
+                        gameOverFontSize, (500, 500))
 
         while playAgain:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     raise SystemExit
 
-            gameOverTitle = Text("Game Over", (0, 0, 0),
-                                 gameOverFontSize, (500, 500))
-            gameOverTitle.draw(dis)
+            gameOver.draw(dis)
             pg.display.update()
             clock.tick(FPS)
 
