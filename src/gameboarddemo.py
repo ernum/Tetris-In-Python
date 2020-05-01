@@ -3,9 +3,8 @@ import figure
 import gameboard
 import generateShapes
 import pygameTitleScreen
-import pygameGameScreen
-import UI
 import time
+from UI import *
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -172,8 +171,8 @@ sliderRect = (width - sliderWidth - sliderMargin, height -
 volumeIconW = 40
 muteClickRadius = 20
 
-volume = UI.VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
-                             muteClickRadius)
+volume = VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
+                          muteClickRadius)
 
 volume.val = pg.mixer.music.get_volume()
 volume.muted = pygameTitleScreen.muted
@@ -192,6 +191,9 @@ while True:
     gb.drawMatrix(dis, ghostMatrix)
 
     if gameOver(f, gb.board):
+
+        fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
+
         for i in range(len(gb.board)-2, -1, -1):
             for j in range(1, len(gb.board[i])-1):
                 gb.board[i][j] = 8
@@ -201,7 +203,25 @@ while True:
                 pg.display.update()
                 clock.tick(FPS)
 
-        raise SystemExit
+        playAgain = True
+        gameOverFontSize = 100
+        gameOverStartY = -gameOverFontSize
+        w, h = dis.get_rect().size
+
+        while playAgain:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    raise SystemExit
+
+            gameOverTitle = Text("Game Over", (0, 0, 0),
+                                 gameOverFontSize, (500, 500))
+            gameOverTitle.draw(dis)
+            pg.display.update()
+            clock.tick(FPS)
+
+        for i in range(len(gb.board)):
+            for j in range(len(gb.board[i])):
+                pass
 
     volume.draw(dis)
     pg.display.update()
