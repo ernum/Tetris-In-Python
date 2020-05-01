@@ -22,17 +22,22 @@ elapsed = time.time() - t
 
 muted = False
 
+
 def exit():
     raise SystemExit
+
 
 def start():
     global started
     started = True
 
+
 started = False
 
-def sqrDistance(p1,p2):
+
+def sqrDistance(p1, p2):
     return (p1[0]-p2[0])**2 + (p1[1]-p2[1])**2
+
 
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
@@ -42,11 +47,11 @@ def titlePage(dis):
     keyWidth = 300
     keyRect = keyImage.get_rect()
     keyHeight = int(keyWidth * keyRect.height/keyRect.width)
-    keyImage = pg.transform.scale(keyImage,(keyWidth,keyHeight))
+    keyImage = pg.transform.scale(keyImage, (keyWidth, keyHeight))
 
     pg.display.set_icon(icon)
 
-    w,h = dis.get_rect().size
+    w, h = dis.get_rect().size
     titleFontSize = 100
     titleStartY = -titleFontSize
     titleDropSpeed = 1
@@ -58,32 +63,39 @@ def titlePage(dis):
     sliderWidth = 20
     sliderHeight = 60
     sliderMargin = 20
-    sliderRect = (w-sliderWidth-sliderMargin,h-sliderHeight-sliderMargin,sliderWidth,sliderHeight)
+    sliderRect = (w-sliderWidth-sliderMargin, h-sliderHeight -
+                  sliderMargin, sliderWidth, sliderHeight)
 
     volumeIconW = 40
     muteClickRadius = 20
 
-    buttonHoverColor = (200,200,200)
+    buttonHoverColor = (200, 200, 200)
 
     titleEndY = (h-buttonHeight)/2 - buttonHeight*1.5 - titleFontSize/2
-    title = Text("TETRIS",(255, 255, 255),titleFontSize,(w/2,titleStartY))
+    title = Text("TETRIS", (255, 255, 255), titleFontSize, (w/2, titleStartY))
 
-    startButton = Button(((w-buttonWidth)/2-buttonWidth*0.6,(h-buttonHeight)/2, buttonWidth, buttonHeight),(255,255,255),0,(100,100,100),"START",buttonFontSize,(0,0,0),start,buttonHoverColor)
-    exitButton = Button(((w-buttonWidth)/2+buttonWidth*0.6,(h-buttonHeight)/2, buttonWidth, buttonHeight),(255,255,255),0,(100,100,100),"EXIT",buttonFontSize,(0,0,0),exit, buttonHoverColor)
+    startButton = Button(((w-buttonWidth)/2-buttonWidth*0.6, (h-buttonHeight)/2, buttonWidth, buttonHeight),
+                         (255, 255, 255), 0, (100, 100, 100), "START", buttonFontSize, (0, 0, 0), start, buttonHoverColor)
+    exitButton = Button(((w-buttonWidth)/2+buttonWidth*0.6, (h-buttonHeight)/2, buttonWidth, buttonHeight),
+                        (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
 
-    volume = VolumeController(sliderRect,(sliderRect[0]-volumeIconW/2 - 10,sliderRect[1]+sliderRect[3]/2),muteClickRadius)
+    volume = VolumeController(
+        sliderRect, (sliderRect[0]-volumeIconW/2 - 10, sliderRect[1]+sliderRect[3]/2), muteClickRadius)
 
     clock = pg.time.Clock()
     t = time.time()
 
     colorIndex = 0
 
-    pauseText = Text("PAUSE",(255,255,255),26,(sliderMargin + 95,h-keyHeight-sliderMargin + 27))
-    rotationText = Text("ROTATE",(255,255,255),26,(sliderMargin + 55,h-keyHeight-sliderMargin + 77))
-    moveText = Text("MOVE",(255,255,255),26,(sliderMargin + 295,h-keyHeight-sliderMargin + 77))
+    pauseText = Text("PAUSE", (255, 255, 255), 26,
+                     (sliderMargin + 95, h-keyHeight-sliderMargin + 27))
+    rotationText = Text("ROTATE", (255, 255, 255), 26,
+                        (sliderMargin + 55, h-keyHeight-sliderMargin + 77))
+    moveText = Text("MOVE", (255, 255, 255), 26,
+                    (sliderMargin + 295, h-keyHeight-sliderMargin + 77))
 
     while not started:
-        dis.fill((0,0,0))
+        dis.fill((0, 0, 0))
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 raise SystemExit
@@ -135,12 +147,12 @@ def titlePage(dis):
         if titleY > titleEndY + 3:
             titleDropSpeed = 0
             title.pos = (title.pos[0], title.pos[1] + titleDropSpeed)
-            
+
         startButton.draw(dis)
         exitButton.draw(dis)
         title.draw(dis)
         volume.draw(dis)
-        dis.blit(keyImage,(sliderMargin,h-keyHeight-sliderMargin + 7))
+        dis.blit(keyImage, (sliderMargin, h-keyHeight-sliderMargin + 7))
         pauseText.draw(dis)
         moveText.draw(dis)
         rotationText.draw(dis)
@@ -148,4 +160,3 @@ def titlePage(dis):
         pg.display.update()
 
         clock.tick(60)
-

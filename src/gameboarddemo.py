@@ -77,7 +77,7 @@ def gameOver(figure, matrix):
     for i in top_row:
         if i != 0 and i != 8:
             return True
-    return True
+    return False
 
 # Checks the board matrix for full rows from the bottom.
 
@@ -156,6 +156,15 @@ def drawGhost(board, drawMatrix, figure):
             return newMatrix
 
 
+def exit():
+    raise SystemExit
+
+
+def play():
+    global playAgain
+    playAgain = True
+
+
 tickRate = 1  # Times per second shapes are falling downwards
 tickCount = 1
 
@@ -183,17 +192,11 @@ das = 0.2  # delayed auto shift, how long after pressing a key it will be checke
 lastPressed = [0, 0, 0]  # Left, Down, Right
 
 while True:
-    dis.fill(BG_COLOR)
-    queue.draw(dis, width-90, 0, 90, 200)
-
-    drawMatrix = matrix_merge(gb.board, f)
-    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
-    gb.drawMatrix(dis, ghostMatrix)
-
     if gameOver(f, gb.board):
 
         fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
-        playAgain = True
+        global playAgain
+        playAgain = False
         gameOverFontSize = 50
         buttonWidth = 150
         buttonHeight = 50
@@ -205,9 +208,9 @@ while True:
         over = Text("OVER", (0, 0, 0),
                     gameOverFontSize, (250, 150))
         playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
-                                 (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), playAgain, buttonHoverColor)
+                                 (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
         exit = Button((175, 255, buttonWidth, buttonHeight),
-                      (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), playAgain, buttonHoverColor)
+                      (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
 
         for i in range(len(gb.board)-2, -1, -1):
             for j in range(1, len(gb.board[i])-1):
@@ -217,7 +220,7 @@ while True:
                 pg.display.update()
                 clock.tick(FPS)
 
-        while playAgain:
+        while not playAgain:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     raise SystemExit
@@ -228,9 +231,6 @@ while True:
                     playAgainButton.click()
                 if exit.isInside(p):
                     exit.click()
-
-                if volume.buttonInside(p):
-                    volume.click()
 
             if playAgainButton.isInside(pg.mouse.get_pos()):
                 playAgainButton.hover()
@@ -249,6 +249,13 @@ while True:
 
             pg.display.update()
             clock.tick(FPS)
+
+    dis.fill(BG_COLOR)
+    queue.draw(dis, width-90, 0, 90, 200)
+
+    drawMatrix = matrix_merge(gb.board, f)
+    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+    gb.drawMatrix(dis, ghostMatrix)
 
     volume.draw(dis)
     pg.display.update()
