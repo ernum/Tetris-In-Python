@@ -3,8 +3,8 @@ import figure
 import gameboard
 import generateShapes
 import pygameTitleScreen
-import UI
 import time
+from UI import *
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -56,15 +56,17 @@ def checkCollision(currentMatrix, figure, movement, rotation):
         for i in range(len(fig_m)):
             if fig_m[j][i] != 0:
                 row = j + figure.matrixPosY + movement[1]
-                column = i  + figure.matrixPosX + movement[0]
+                column = i + figure.matrixPosX + movement[0]
                 nextBlock = currentMatrix[row][column]
                 if nextBlock != 0:
                     return True
     return False
-  
+
+
 def nextShape(queue, currentMatrix):
     figure = queue.next()
-    fig_m = figure.shape_from_input(shapes[currentShapeNumber])[figure.currentRotation]
+    fig_m = figure.shape_from_input(shapes[currentShapeNumber])[
+        figure.currentRotation]
     middle = len(currentMatrix[0])//2 - len(fig_m)//2
     figure.matrixPosX = middle
     return figure
@@ -78,6 +80,8 @@ def gameOver(figure, matrix):
     return False
 
 # Checks the board matrix for full rows from the bottom.
+
+
 def row_check(currentMatrix):
     removed_index = []
     for r in range(len(currentMatrix)-2, -1, -1):
@@ -87,7 +91,8 @@ def row_check(currentMatrix):
                 full_rows[k-1] = False
         if all(full_rows):
             removed_index.append(r)
-            currentMatrix[r][1:len(currentMatrix[0])-1] = [0 for n in range(len(currentMatrix[0])-2)]
+            currentMatrix[r][1:len(currentMatrix[0]) -
+                             1] = [0 for n in range(len(currentMatrix[0])-2)]
     return currentMatrix, removed_index
 
 
@@ -96,11 +101,14 @@ def empty_row_removal(currentMatrix, removed_index):
     for i in removed_index:
         for r in range(removed_index[0], -1, -1):
             if r == 0:
-                currentMatrix[r][1:len(currentMatrix[r]) - 1] = [0 for n in range(len(currentMatrix[0]) - 2)]
+                currentMatrix[r][1:len(
+                    currentMatrix[r]) - 1] = [0 for n in range(len(currentMatrix[0]) - 2)]
             else:
                 currentMatrix[r] = currentMatrix[r - 1]
     return currentMatrix
-def rotationCollision(figure,clockwise):
+
+
+def rotationCollision(figure, clockwise):
     if clockwise > 1:
         if f.shape != 'I':
             movements = [[(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 0 >> 1
@@ -131,19 +139,40 @@ def rotationCollision(figure,clockwise):
             f.move(i)
             break
 
+
 def moveIfPossible(board, f, move):
-    if not checkCollision(board,f,move,0):
+    if not checkCollision(board, f, move, 0):
         f.move(move)
         return True
     return False
 
+
 def drawGhost(board, drawMatrix, figure):
-    for down in range(1,len(board)):
-        if checkCollision(board,figure,(0,down),0):
+    for down in range(1, len(board)):
+        if checkCollision(board, figure, (0, down), 0):
             ghost = figure.ghostCopy()
-            ghost.move((0,down-1))
-            newMatrix = matrix_merge(drawMatrix,ghost)
+            ghost.move((0, down-1))
+            newMatrix = matrix_merge(drawMatrix, ghost)
             return newMatrix
+
+
+def exit():
+    raise SystemExit
+
+
+def play():
+    global playAgain
+    playAgain = True
+
+
+def reset():
+    gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
+                         0, board_rows, board_cols, 20)
+    drawMatrix = matrix_merge(gb.board, f)
+    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+    gb.drawMatrix(dis, ghostMatrix)
+    pg.display.update()
+
 
 tickRate = 1  # Times per second shapes are falling downwards
 tickCount = 1
@@ -154,23 +183,25 @@ f = nextShape(queue, gb.board)
 sliderWidth = 20
 sliderHeight = 60
 sliderMargin = 20
-sliderRect = (width - sliderWidth - sliderMargin, height - sliderHeight - sliderMargin, sliderWidth, sliderHeight)
+sliderRect = (width - sliderWidth - sliderMargin, height -
+              sliderHeight - sliderMargin, sliderWidth, sliderHeight)
 
 volumeIconW = 40
 muteClickRadius = 20
 
-volume = UI.VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
+volume = VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
                           muteClickRadius)
 
 volume.val = pg.mixer.music.get_volume()
 volume.muted = pygameTitleScreen.muted
 
-keyCheckRate = 20 # How many times per second the game checks if a key is held down
-das = 0.2 # delayed auto shift, how long after pressing a key it will be checked again. In seconds
+keyCheckRate = 20  # How many times per second the game checks if a key is held down
+das = 0.2  # delayed auto shift, how long after pressing a key it will be checked again. In seconds
 
-lastPressed = [0, 0, 0] #Left, Down, Right
+lastPressed = [0, 0, 0]  # Left, Down, Right
 
 while True:
+
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
 
@@ -179,7 +210,61 @@ while True:
     gb.drawMatrix(dis, ghostMatrix)
 
     if gameOver(f, gb.board):
-        raise SystemExit
+
+        fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
+        global playAgain
+        playAgain = False
+        gameOverFontSize = 50
+        buttonWidth = 150
+        buttonHeight = 50
+        buttonFontSize = 20
+        buttonHoverColor = (200, 200, 200)
+
+        game = Text("GAME", (0, 0, 0),
+                    gameOverFontSize, (250, 100))
+        over = Text("OVER", (0, 0, 0),
+                    gameOverFontSize, (250, 150))
+        playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
+                                 (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
+        exit = Button((175, 255, buttonWidth, buttonHeight),
+                      (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
+
+        for i in range(len(gb.board)-2, -1, -1):
+            for j in range(1, len(gb.board[i])-1):
+                gb.board[i][j] = 8
+                drawMatrix = matrix_merge(gb.board, f)
+                gb.drawMatrix(dis, drawMatrix)
+                pg.display.update()
+                clock.tick(FPS)
+
+        while not playAgain:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    raise SystemExit
+
+            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                p = pg.mouse.get_pos()
+                if playAgainButton.isInside(p):
+                    playAgainButton.click()
+                if exit.isInside(p):
+                    exit.click()
+
+            if playAgainButton.isInside(pg.mouse.get_pos()):
+                playAgainButton.hover()
+            else:
+                playAgainButton.noHover()
+
+            if exit.isInside(pg.mouse.get_pos()):
+                exit.hover()
+            else:
+                exit.noHover()
+
+            game.draw(dis)
+            over.draw(dis)
+            playAgainButton.draw(dis)
+            exit.draw(dis)
+            pg.display.update()
+        reset()
 
     volume.draw(dis)
     pg.display.update()
@@ -189,7 +274,7 @@ while True:
             pg.mixer.music.set_volume(volume.val)
 
     if tickCount % (FPS//tickRate) == 0:
-        if not checkCollision(gb.board, f, (0,1), 0):
+        if not checkCollision(gb.board, f, (0, 1), 0):
             f.fall()
         else:
             gb.board = drawMatrix
@@ -211,9 +296,9 @@ while True:
         if event.type == pg.KEYDOWN:
             # Controls
             if event.key == pg.K_x:
-                rotationCollision(f,True)
+                rotationCollision(f, True)
             if event.key == pg.K_z:
-                rotationCollision(f,False)
+                rotationCollision(f, False)
 
             if event.key == pg.K_LEFT:
                 moveIfPossible(gb.board, f, (-1, 0))
