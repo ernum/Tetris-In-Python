@@ -77,7 +77,7 @@ def gameOver(figure, matrix):
     for i in top_row:
         if i != 0 and i != 8:
             return True
-    return False
+    return True
 
 # Checks the board matrix for full rows from the bottom.
 
@@ -193,34 +193,62 @@ while True:
     if gameOver(f, gb.board):
 
         fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
+        playAgain = True
+        gameOverFontSize = 50
+        buttonWidth = 150
+        buttonHeight = 50
+        buttonFontSize = 20
+        buttonHoverColor = (200, 200, 200)
+
+        game = Text("GAME", (0, 0, 0),
+                    gameOverFontSize, (250, 100))
+        over = Text("OVER", (0, 0, 0),
+                    gameOverFontSize, (250, 150))
+        playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
+                                 (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), playAgain, buttonHoverColor)
+        exit = Button((175, 255, buttonWidth, buttonHeight),
+                      (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), playAgain, buttonHoverColor)
 
         for i in range(len(gb.board)-2, -1, -1):
             for j in range(1, len(gb.board[i])-1):
                 gb.board[i][j] = 8
                 drawMatrix = matrix_merge(gb.board, f)
-                ghostMatrix = drawGhost(gb.board, drawMatrix, f)
-                gb.drawMatrix(dis, ghostMatrix)
+                gb.drawMatrix(dis, drawMatrix)
                 pg.display.update()
                 clock.tick(FPS)
-
-        playAgain = True
-        gameOverFontSize = 100
-        gameOverStartY = -gameOverFontSize
-        gameOver = Text("Game Over", (250, 250, 250),
-                        gameOverFontSize, (500, 500))
 
         while playAgain:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     raise SystemExit
 
-            gameOver.draw(dis)
+            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                p = pg.mouse.get_pos()
+                if playAgainButton.isInside(p):
+                    playAgainButton.click()
+                if exit.isInside(p):
+                    exit.click()
+
+                if volume.buttonInside(p):
+                    volume.click()
+
+            if playAgainButton.isInside(pg.mouse.get_pos()):
+                playAgainButton.hover()
+            else:
+                playAgainButton.noHover()
+
+            if exit.isInside(pg.mouse.get_pos()):
+                exit.hover()
+            else:
+                exit.noHover()
+
+            game.draw(dis)
+            over.draw(dis)
+            playAgainButton.draw(dis)
+            exit.draw(dis)
+
             pg.display.update()
             clock.tick(FPS)
-
-        for i in range(len(gb.board)):
-            for j in range(len(gb.board[i])):
-                pass
 
     volume.draw(dis)
     pg.display.update()
