@@ -165,6 +165,15 @@ def play():
     playAgain = True
 
 
+def reset():
+    gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
+                         0, board_rows, board_cols, 20)
+    drawMatrix = matrix_merge(gb.board, f)
+    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+    gb.drawMatrix(dis, ghostMatrix)
+    pg.display.update()
+
+
 tickRate = 1  # Times per second shapes are falling downwards
 tickCount = 1
 
@@ -192,6 +201,14 @@ das = 0.2  # delayed auto shift, how long after pressing a key it will be checke
 lastPressed = [0, 0, 0]  # Left, Down, Right
 
 while True:
+
+    dis.fill(BG_COLOR)
+    queue.draw(dis, width-90, 0, 90, 200)
+
+    drawMatrix = matrix_merge(gb.board, f)
+    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+    gb.drawMatrix(dis, ghostMatrix)
+
     if gameOver(f, gb.board):
 
         fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
@@ -246,16 +263,8 @@ while True:
             over.draw(dis)
             playAgainButton.draw(dis)
             exit.draw(dis)
-
             pg.display.update()
-            clock.tick(FPS)
-
-    dis.fill(BG_COLOR)
-    queue.draw(dis, width-90, 0, 90, 200)
-
-    drawMatrix = matrix_merge(gb.board, f)
-    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
-    gb.drawMatrix(dis, ghostMatrix)
+        reset()
 
     volume.draw(dis)
     pg.display.update()
