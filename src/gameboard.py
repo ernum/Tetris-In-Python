@@ -24,7 +24,10 @@ blue_img = pg.image.load("../images/blue.png")
 pink_img = pg.image.load("../images/pink.png")
 ghost_img = pg.image.load("../images/ghost.png")
 
-images = [yel_img, turq_img, green_img, red_img, orange_img, blue_img, pink_img, walls_img, ghost_img]
+images = [yel_img, turq_img, green_img, red_img,
+          orange_img, blue_img, pink_img, walls_img, ghost_img]
+
+
 class Board:
     """ Game board represented as a nxm matrix
     with borders as number n (n will give which type of block the wall is). Ex:
@@ -65,4 +68,4 @@ class Board:
                                           self.posY + row * self.blockSize + row * margin - 1), (20, margin)))
                 else:
                     window.blit(images[number-1], (self.posX + self.blockSize * column + margin * column,
-                                            self.posY + row * self.blockSize + row * margin))
+                                                   self.posY + row * self.blockSize + row * margin))
