@@ -226,7 +226,7 @@ while True:
                     gameOverFontSize, (250, 150))
         playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
                                  (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
-        exit = Button((175, 255, buttonWidth, buttonHeight),
+        exit_button = Button((175, 255, buttonWidth, buttonHeight),
                       (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
 
         for i in range(len(gb.board)-2, -1, -1):
@@ -246,23 +246,23 @@ while True:
                 p = pg.mouse.get_pos()
                 if playAgainButton.isInside(p):
                     playAgainButton.click()
-                if exit.isInside(p):
-                    exit.click()
+                if exit_button.isInside(p):
+                    exit_button.click()
 
             if playAgainButton.isInside(pg.mouse.get_pos()):
                 playAgainButton.hover()
             else:
                 playAgainButton.noHover()
 
-            if exit.isInside(pg.mouse.get_pos()):
-                exit.hover()
+            if exit_button.isInside(pg.mouse.get_pos()):
+                exit_button.hover()
             else:
-                exit.noHover()
+                exit_button.noHover()
 
             game.draw(dis)
             over.draw(dis)
             playAgainButton.draw(dis)
-            exit.draw(dis)
+            exit_button.draw(dis)
             pg.display.update()
         reset()
 
