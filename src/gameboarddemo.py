@@ -74,7 +74,7 @@ def nextShape(queue, currentMatrix):
     return figure
 
 
-def gameOver(figure, matrix):
+def gameOver(matrix):
     top_row = [a for a in matrix[0]]
     for i in top_row:
         if i != 0 and i != 8:
@@ -266,7 +266,7 @@ while True:
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
     gb.drawMatrix(dis, ghostMatrix)
 
-    if gameOver(f, gb.board):
+    if gameOver(gb.board):
         gameOverPage()
 
 
