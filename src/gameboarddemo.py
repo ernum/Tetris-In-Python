@@ -5,6 +5,7 @@ import generateShapes
 import pygameTitleScreen
 import time
 from UI import *
+import Animations
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -30,7 +31,6 @@ pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      0, board_rows, board_cols, 20)
-
 
 def matrix_merge(currentMatrix, figure):
     rotation = figure.currentRotation
@@ -200,13 +200,16 @@ das = 0.2  # delayed auto shift, how long after pressing a key it will be checke
 
 lastPressed = [0, 0, 0]  # Left, Down, Right
 
+
 while True:
+
 
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
 
     drawMatrix = matrix_merge(gb.board, f)
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+
     gb.drawMatrix(dis, ghostMatrix)
 
     if gameOver(f, gb.board):
@@ -267,6 +270,8 @@ while True:
         reset()
 
     volume.draw(dis)
+
+
     pg.display.update()
 
     if pg.mouse.get_pressed()[0]:
@@ -280,6 +285,14 @@ while True:
             gb.board = drawMatrix
             gb.board, removed_index = row_check(gb.board)
             if len(removed_index) > 0:
+
+                newSurf = pg.Surface((width,height))
+                newSurf.fill(BG_COLOR)
+                queue.draw(newSurf, width - 90, 0, 90, 200)
+                gb.drawMatrix(newSurf, gb.board)
+
+                Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
+
                 gb.board = empty_row_removal(gb.board, removed_index)
 
             f = nextShape(queue, gb.board)
