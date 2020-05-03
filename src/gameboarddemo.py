@@ -216,58 +216,7 @@ while True:
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
 
     gb.drawMatrix(dis, ghostMatrix)
-    if gameOver(f, gb.board):
 
-        fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
-        global playAgain
-        playAgain = False
-        gameOverFontSize = 50
-        buttonWidth = 150
-        buttonHeight = 50
-        buttonFontSize = 20
-        buttonHoverColor = (200, 200, 200)
-        if landAnimation != None:
-            tickReset = True
-            landAnimation.finished = True
-
-        game = Text("GAME", (0, 0, 0),
-                    gameOverFontSize, (250, 100))
-        over = Text("OVER", (0, 0, 0),
-                    gameOverFontSize, (250, 150))
-        playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
-                                 (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
-        exit_button = Button((175, 255, buttonWidth, buttonHeight),
-                      (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
-
-        for i in range(len(gb.board)-2, -1, -1):
-            for j in range(1, len(gb.board[i])-1):
-                gb.board[i][j] = 8
-                drawMatrix = matrix_merge(gb.board, f)
-                gb.drawMatrix(dis, drawMatrix)
-                pg.display.update()
-                clock.tick(FPS)
-
-        while not playAgain:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    raise SystemExit
-
-                if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                    p = pg.mouse.get_pos()
-                    if playAgainButton.isInside(p):
-                        playAgainButton.click()
-                    if exit_button.isInside(p):
-                        exit_button.click()
-
-            if playAgainButton.isInside(pg.mouse.get_pos()):
-                playAgainButton.hover()
-            else:
-                playAgainButton.noHover()
-
-            if exit_button.isInside(pg.mouse.get_pos()):
-                exit_button.hover()
-            else:
-                exit_button.noHover()
 
     # Draw pause message
     if game_state == PAUSE:
