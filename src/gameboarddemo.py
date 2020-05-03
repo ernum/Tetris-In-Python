@@ -212,6 +212,7 @@ while True:
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
     gb.drawMatrix(dis, ghostMatrix)
 
+
     # Draw pause message
     if game_state == PAUSE:
         pause_img = pg.image.load("../images/pauseScreen3.png")
