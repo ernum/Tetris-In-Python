@@ -23,7 +23,7 @@ BLOCK_SIZE = 20
 
 # Music
 pg.mixer.init()
-pg.mixer.music.load("../Sound/noraprap (1).wav")
+pg.mixer.music.load("../Sound/Soundtrack/electrify.wav")
 pg.mixer.music.play(-1)
 pg.mixer.music.set_volume(0.6)
 
@@ -204,6 +204,10 @@ tickReset = False
 
 landAnimation = None
 
+RUNNING, PAUSE = 1,0
+game_state = RUNNING
+
+
 while True:
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
@@ -212,7 +216,6 @@ while True:
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
 
     gb.drawMatrix(dis, ghostMatrix)
-
     if gameOver(f, gb.board):
 
         fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
@@ -266,12 +269,69 @@ while True:
             else:
                 exit_button.noHover()
 
-            game.draw(dis)
-            over.draw(dis)
-            playAgainButton.draw(dis)
-            exit_button.draw(dis)
-            pg.display.update()
-        reset()
+    # Draw pause message
+    if game_state == PAUSE:
+        pause_img = pg.image.load("../images/pauseScreen3.png")
+        pause_img = pg.transform.scale(pause_img, ((board_cols - 2)*21 + 1, 100))
+        dis.blit(pause_img, ((width - 21*board_cols)/2 + BLOCK_SIZE, 70))
+
+    if game_state == RUNNING:
+        if gameOver(f, gb.board):
+
+            fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
+            global playAgain
+            playAgain = False
+            gameOverFontSize = 50
+            buttonWidth = 150
+            buttonHeight = 50
+            buttonFontSize = 20
+            buttonHoverColor = (200, 200, 200)
+
+            game = Text("GAME", (0, 0, 0),
+                        gameOverFontSize, (250, 100))
+            over = Text("OVER", (0, 0, 0),
+                        gameOverFontSize, (250, 150))
+            playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
+                                     (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
+            exit = Button((175, 255, buttonWidth, buttonHeight),
+                          (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
+
+            for i in range(len(gb.board)-2, -1, -1):
+                for j in range(1, len(gb.board[i])-1):
+                    gb.board[i][j] = 8
+                    drawMatrix = matrix_merge(gb.board, f)
+                    gb.drawMatrix(dis, drawMatrix)
+                    pg.display.update()
+                    clock.tick(FPS)
+
+            while not playAgain:
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        raise SystemExit
+
+                if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                    p = pg.mouse.get_pos()
+                    if playAgainButton.isInside(p):
+                        playAgainButton.click()
+                    if exit.isInside(p):
+                        exit.click()
+
+                if playAgainButton.isInside(pg.mouse.get_pos()):
+                    playAgainButton.hover()
+                else:
+                    playAgainButton.noHover()
+
+                if exit.isInside(pg.mouse.get_pos()):
+                    exit.hover()
+                else:
+                    exit.noHover()
+
+                game.draw(dis)
+                over.draw(dis)
+                playAgainButton.draw(dis)
+                exit.draw(dis)
+                pg.display.update()
+            reset()
 
     volume.draw(dis)
 
@@ -284,6 +344,15 @@ while True:
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
+    if game_state == RUNNING:
+        if tickCount % (FPS//tickRate) == 0:
+            if not checkCollision(gb.board, f, (0, 1), 0):
+                f.fall()
+            else:
+                gb.board = drawMatrix
+                gb.board, removed_index = row_check(gb.board)
+                if len(removed_index) > 0:
+                    gb.board = empty_row_removal(gb.board, removed_index)
 
     if not tickReset and checkCollision(gb.board,f,(0,1),0):
         landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
@@ -321,33 +390,39 @@ while True:
 
         if event.type == pg.KEYDOWN:
             # Controls
-            if event.key == pg.K_x:
-                rotationCollision(f, True)
-            if event.key == pg.K_z:
-                rotationCollision(f, False)
+            if game_state == RUNNING:
+                if event.key == pg.K_x:
+                    rotationCollision(f, True)
+                if event.key == pg.K_z:
+                    rotationCollision(f, False)
 
-            if event.key == pg.K_LEFT:
-                moveIfPossible(gb.board, f, (-1, 0))
-                lastPressed[0] = time.time()
-            if event.key == pg.K_DOWN:
-                moveIfPossible(gb.board, f, (0, 1))
-                lastPressed[1] = time.time()
-            if event.key == pg.K_RIGHT:
-                moveIfPossible(gb.board, f, (1, 0))
-                lastPressed[2] = time.time()
+                if event.key == pg.K_LEFT:
+                    moveIfPossible(gb.board, f, (-1, 0))
+                    lastPressed[0] = time.time()
+                if event.key == pg.K_DOWN:
+                    moveIfPossible(gb.board, f, (0, 1))
+                    lastPressed[1] = time.time()
+                if event.key == pg.K_RIGHT:
+                    moveIfPossible(gb.board, f, (1, 0))
+                    lastPressed[2] = time.time()
+            if event.key == pg.K_p:
+                if game_state == RUNNING:
+                    game_state = PAUSE
+                elif game_state == PAUSE:
+                    game_state = RUNNING
 
     pressed = pg.key.get_pressed()
+    if game_state == RUNNING:
+        t = time.time()
+        if tickCount % (FPS//keyCheckRate) == 0:
+            if pressed[pg.K_LEFT] and t-lastPressed[0] >= das:
+                moveIfPossible(gb.board, f, (-1, 0))
 
-    t = time.time()
-    if tickCount % (FPS//keyCheckRate) == 0:
-        if pressed[pg.K_LEFT] and t-lastPressed[0] >= das:
-            moveIfPossible(gb.board, f, (-1, 0))
+            if pressed[pg.K_RIGHT] and t-lastPressed[2] >= das:
+                moveIfPossible(gb.board, f, (1, 0))
 
-        if pressed[pg.K_RIGHT] and t-lastPressed[2] >= das:
-            moveIfPossible(gb.board, f, (1, 0))
+            if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
+                moveIfPossible(gb.board, f, (0, 1))
 
-        if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
-            moveIfPossible(gb.board, f, (0, 1))
-
-    clock.tick(FPS)
-    tickCount += 1
+        clock.tick(FPS)
+        tickCount += 1
