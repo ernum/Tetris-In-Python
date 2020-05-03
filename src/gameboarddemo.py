@@ -200,10 +200,11 @@ das = 0.2  # delayed auto shift, how long after pressing a key it will be checke
 
 lastPressed = [0, 0, 0]  # Left, Down, Right
 
+tickReset = False
+
+landAnimation = None
 
 while True:
-
-
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
 
@@ -222,6 +223,9 @@ while True:
         buttonHeight = 50
         buttonFontSize = 20
         buttonHoverColor = (200, 200, 200)
+        if landAnimation != None:
+            tickReset = True
+            landAnimation.finished = True
 
         game = Text("GAME", (0, 0, 0),
                     gameOverFontSize, (250, 100))
@@ -245,12 +249,12 @@ while True:
                 if event.type == pg.QUIT:
                     raise SystemExit
 
-            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                p = pg.mouse.get_pos()
-                if playAgainButton.isInside(p):
-                    playAgainButton.click()
-                if exit_button.isInside(p):
-                    exit_button.click()
+                if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                    p = pg.mouse.get_pos()
+                    if playAgainButton.isInside(p):
+                        playAgainButton.click()
+                    if exit_button.isInside(p):
+                        exit_button.click()
 
             if playAgainButton.isInside(pg.mouse.get_pos()):
                 playAgainButton.hover()
@@ -271,6 +275,9 @@ while True:
 
     volume.draw(dis)
 
+    if landAnimation != None and not landAnimation.finished:
+        landAnimation.draw(dis)
+        landAnimation.next()
 
     pg.display.update()
 
@@ -278,7 +285,13 @@ while True:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
 
+    if not tickReset and checkCollision(gb.board,f,(0,1),0):
+        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
+        tickCount = 1
+        tickReset = True
+
     if tickCount % (FPS//tickRate) == 0:
+        tickReset = False
         if not checkCollision(gb.board, f, (0, 1), 0):
             f.fall()
         else:

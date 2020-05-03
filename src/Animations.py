@@ -50,12 +50,42 @@ class RowAnimation(Animation):
                 surf.blit(oldL, (-speed * i, row * BLOCK_SIZE))
                 surf.blit(oldR, (surfW // 2 + speed * i, row * BLOCK_SIZE))
 
-                pg.draw.rect(surf,(255,255,255,100),(-speed * i - board_cols // 2 * BLOCK_SIZE, row * BLOCK_SIZE, surfW, BLOCK_SIZE))
-                pg.draw.rect(surf,(255,255,255,100),(surfW // 2 + speed * i, row * BLOCK_SIZE, surfW, BLOCK_SIZE))
+                pg.draw.rect(surf,(255,255,255,70),(-speed * i - board_cols // 2 * BLOCK_SIZE, row * BLOCK_SIZE, surfW, BLOCK_SIZE))
+                pg.draw.rect(surf,(255,255,255,70),(surfW // 2 + speed * i, row * BLOCK_SIZE, surfW, BLOCK_SIZE))
 
 
             surfaces.append(surf)
 
         Animation.__init__(self,surfaces, pos)
 
+class LandAnimation:
+    def __init__(self, fig, frames):
+        self.figure = fig
+        self.currFig = -1
+        self.finished = False
+        self.frames = frames
+        self.surf = self.next()
 
+
+    def next(self):
+        self.currFig += 1
+        if self.currFig >= self.frames - 1:
+            self.finished = True
+
+
+    def draw(self, dis):
+        maxAlpha = 100
+        alpha = int(maxAlpha - ((self.currFig - self.frames / 2) ** 2 / (self.frames ** 2 / 4)) * maxAlpha)
+        surf = pg.Surface((board_cols * BLOCK_SIZE, board_rows * BLOCK_SIZE), pg.SRCALPHA)
+        shape = self.figure.shapeList[self.figure.currentRotation]
+
+        for i in range(len(shape)):
+            row = shape[i]
+            for j in range(len(row)):
+                val = row[j]
+                if val != 0:
+                    pg.draw.rect(surf, (255, 255, 255, alpha), (
+                    (j - 1 + self.figure.matrixPosX) * BLOCK_SIZE, (i + self.figure.matrixPosY) * BLOCK_SIZE,
+                    BLOCK_SIZE, BLOCK_SIZE))
+
+        dis.blit(surf,(width // 2 - board_cols // 2 * BLOCK_SIZE, 0))
