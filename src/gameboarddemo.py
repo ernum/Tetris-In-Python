@@ -343,11 +343,12 @@ while True:
             if len(removed_index) > 0:
                 gb.board = empty_row_removal(gb.board, removed_index)
                 linesCleared += len(removed_index)
-                score += calcPoints(level, len(removed_index))
-                scoreText = createScoreText(score)
-                if linesCleared >= linesClearedForNewLevel:
-                    nextLevel()
-                    linesCleared %= linesClearedForNewLevel
+                if linesCleared <= 4:
+                    score += calcPoints(level, linesCleared)
+                    scoreText = createScoreText(score)
+                    if linesCleared >= linesClearedForNewLevel:
+                        nextLevel()
+                        linesCleared %= linesClearedForNewLevel
 
             f = nextShape(queue, gb.board)
 
@@ -397,8 +398,8 @@ while True:
             if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
                 moveIfPossible(gb.board, f, (0, 1))
 
-            tickCount += 1
+        tickCount += 1
 
-            pg.display.update()
-            clock.tick(FPS)
+        pg.display.update()
+        clock.tick(FPS)
 
