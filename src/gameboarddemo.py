@@ -208,7 +208,8 @@ rowAnimations = True
 RUNNING, PAUSE = 1,0
 game_state = RUNNING
 
-landingAnimationLength = 30 # in frames
+landingAnimationLength = 20 # in frames
+
 while True:
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
@@ -262,12 +263,12 @@ while True:
                     if event.type == pg.QUIT:
                         raise SystemExit
 
-                if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                    p = pg.mouse.get_pos()
-                    if playAgainButton.isInside(p):
-                        playAgainButton.click()
-                    if exit.isInside(p):
-                        exit.click()
+                    if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                        p = pg.mouse.get_pos()
+                        if playAgainButton.isInside(p):
+                            playAgainButton.click()
+                        if exit.isInside(p):
+                            exit.click()
 
                 if playAgainButton.isInside(pg.mouse.get_pos()):
                     playAgainButton.hover()
@@ -299,7 +300,7 @@ while True:
             pg.mixer.music.set_volume(volume.val)
 
     if not tickReset and checkCollision(gb.board,f,(0,1),0):
-        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / (FPS - landingAnimationLength))))
+        landAnimation = Animations.LandAnimation(f, landingAnimationLength)
         tickCount = FPS - landingAnimationLength
         tickReset = True
 
