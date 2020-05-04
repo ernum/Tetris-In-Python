@@ -35,9 +35,9 @@ def gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     if landAnimation != None:
         landAnimation.finished = True
 
-    game = Text("GAME", textColor,
+    game = Text("Game", textColor,
                 gameOverFontSize, (textPositionX, textPositionY))
-    over = Text("OVER", textColor,
+    over = Text("Over", textColor,
                 gameOverFontSize, (textPositionX, textPositionY + 50))
     playAgainButton = Button((buttonWidth + 25, buttonWidth + 50, buttonWidth, buttonHeight),
                              (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
