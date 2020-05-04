@@ -59,13 +59,12 @@ class Board:
         for column in range(len(matrix[0])):
             for row in range(len(matrix)):
                 number = matrix[row][column]
-                if number == 0:
-                    pg.draw.rect(window, (111, 111, 111),
-                                 pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
-                                          self.posY + row * self.blockSize + row * margin - 1), (margin, 21)))
-                    pg.draw.rect(window, (111, 111, 111),
-                                 pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
-                                          self.posY + row * self.blockSize + row * margin - 1), (20, margin)))
-                else:
+                pg.draw.rect(window, (111, 111, 111),
+                             pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
+                                      self.posY + row * self.blockSize + row * margin - 1), (margin, 21)))
+                pg.draw.rect(window, (111, 111, 111),
+                             pg.Rect((self.posX + self.blockSize * column + margin * column - 1,
+                                      self.posY + row * self.blockSize + row * margin - 1), (20, margin)))
+                if number != 0:
                     window.blit(images[number-1], (self.posX + self.blockSize * column + margin * column,
                                                    self.posY + row * self.blockSize + row * margin))

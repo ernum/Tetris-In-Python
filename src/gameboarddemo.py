@@ -5,6 +5,7 @@ import generateShapes
 import pygameTitleScreen
 import time
 from UI import *
+import Animations
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -234,16 +235,22 @@ scoreText = createScoreText(0)
 f = nextShape(queue, gb.board)
 nextLevel()
 
+tickReset = False
+
+landAnimation = None
+rowAnimations = True
+
 RUNNING, PAUSE = 1,0
 game_state = RUNNING
 
-while True:
 
+while True:
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
 
     drawMatrix = matrix_merge(gb.board, f)
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+
     gb.drawMatrix(dis, ghostMatrix)
 
 
@@ -267,6 +274,10 @@ while True:
             score = 0
             level = -1
             nextLevel()
+            
+            tickReset = True
+            if landAnimation != None:
+                landAnimation.finished = True
 
             game = Text("GAME", (0, 0, 0),
                         gameOverFontSize, (250, 100))
@@ -318,19 +329,38 @@ while True:
     levelText.draw(dis)
     scoreText.draw(dis)
 
+    if landAnimation != None and not landAnimation.finished:
+        landAnimation.draw(dis)
+        landAnimation.next()
+
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
 
+    if not tickReset and checkCollision(gb.board,f,(0,1),0):
+        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
+        tickCount = 1
+        tickReset = True
+        
     if game_state == RUNNING:
 
         if tickCount % (FPS//tickRate) == 0:
+            tickReset = False
             if not checkCollision(gb.board, f, (0, 1), 0):
                 f.fall()
             else:
                 gb.board = drawMatrix
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
+
+                    newSurf = pg.Surface((width,height))
+                    newSurf.fill(BG_COLOR)
+                    queue.draw(newSurf, width - 90, 0, 90, 200)
+                    gb.drawMatrix(newSurf, gb.board)
+
+                    if rowAnimations:
+                        Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
+
                     gb.board = empty_row_removal(gb.board, removed_index)
                     linesCleared += len(removed_index)
                     if len(removed_index) <= 4:
