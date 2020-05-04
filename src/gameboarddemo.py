@@ -261,7 +261,7 @@ while True:
     scoreText.draw(dis)
 
     if game_state == RUNNING:
-        if gameOver(f, gb.board):
+        if gameOver(gb.board):
             pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
             reset()
 
