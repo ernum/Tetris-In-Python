@@ -3,6 +3,7 @@ import figure
 import gameboard
 import generateShapes
 import pygameTitleScreen
+import pygameGameOverScreen
 import time
 from UI import *
 import Animations
@@ -113,7 +114,7 @@ def nextShape(queue, currentMatrix):
     figure.matrixPosX = middle
 
     if checkCollision(currentMatrix, figure, (0,0), 0):
-        gameOverPage()
+        pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
 
     return figure
 
@@ -202,15 +203,6 @@ def drawGhost(board, drawMatrix, figure):
             return newMatrix
 
 
-def exit():
-    raise SystemExit
-
-
-def play():
-    global playAgain
-    playAgain = True
-
-
 def reset():
     gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                          0, board_rows, board_cols, 20)
@@ -218,62 +210,6 @@ def reset():
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
     gb.drawMatrix(dis, ghostMatrix)
     pg.display.update()
-
-def gameOverPage():
-    global playAgain
-    playAgain = False
-    gameOverFontSize = 50
-    buttonWidth = 150
-    buttonHeight = 50
-    buttonFontSize = 20
-    buttonHoverColor = (200, 200, 200)
-
-    game = Text("GAME", (0, 0, 0),
-                gameOverFontSize, (250, 100))
-    over = Text("OVER", (0, 0, 0),
-                gameOverFontSize, (250, 150))
-    playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
-                             (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play,
-                             buttonHoverColor)
-    exit_button = Button((175, 255, buttonWidth, buttonHeight),
-                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
-
-    for i in range(len(gb.board) - 2, -1, -1):
-        for j in range(1, len(gb.board[i]) - 1):
-            gb.board[i][j] = 8
-            drawMatrix = matrix_merge(gb.board, f)
-            gb.drawMatrix(dis, drawMatrix)
-            pg.display.update()
-            clock.tick(FPS)
-
-    while not playAgain:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                raise SystemExit
-
-            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                p = pg.mouse.get_pos()
-                if playAgainButton.isInside(p):
-                    playAgainButton.click()
-                if exit_button.isInside(p):
-                    exit_button.click()
-
-        if playAgainButton.isInside(pg.mouse.get_pos()):
-            playAgainButton.hover()
-        else:
-            playAgainButton.noHover()
-
-        if exit_button.isInside(pg.mouse.get_pos()):
-            exit_button.hover()
-        else:
-            exit_button.noHover()
-
-        game.draw(dis)
-        over.draw(dis)
-        playAgainButton.draw(dis)
-        exit_button.draw(dis)
-        pg.display.update()
-    reset()
 
 def nextLevel():
     global level, levelText, tickRate
@@ -325,9 +261,9 @@ while True:
     scoreText.draw(dis)
 
     if game_state == RUNNING:
-        if gameOver(gb.board):
-           gameOverPage()
-
+        if gameOver(f, gb.board):
+            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
+            reset()
 
     if landAnimation != None and not landAnimation.finished:
         landAnimation.draw(dis)
