@@ -208,7 +208,7 @@ rowAnimations = True
 RUNNING, PAUSE = 1,0
 game_state = RUNNING
 
-
+landingAnimationLength = 30 # in frames
 while True:
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
@@ -299,8 +299,8 @@ while True:
             pg.mixer.music.set_volume(volume.val)
 
     if not tickReset and checkCollision(gb.board,f,(0,1),0):
-        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
-        tickCount = 1
+        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / (FPS - landingAnimationLength))))
+        tickCount = FPS - landingAnimationLength
         tickReset = True
 
     if game_state == RUNNING:
