@@ -257,13 +257,16 @@ while True:
         if gameOver(f, gb.board):
 
             fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
-            global playAgain
             playAgain = False
             gameOverFontSize = 50
             buttonWidth = 150
             buttonHeight = 50
             buttonFontSize = 20
             buttonHoverColor = (200, 200, 200)
+
+            score = 0
+            level = -1
+            nextLevel()
 
             game = Text("GAME", (0, 0, 0),
                         gameOverFontSize, (250, 100))
@@ -318,7 +321,9 @@ while True:
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
+
     if game_state == RUNNING:
+
         if tickCount % (FPS//tickRate) == 0:
             if not checkCollision(gb.board, f, (0, 1), 0):
                 f.fall()
@@ -327,23 +332,15 @@ while True:
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
                     gb.board = empty_row_removal(gb.board, removed_index)
+                    linesCleared += len(removed_index)
+                    if linesCleared <= 4:
+                        score += calcPoints(level, linesCleared)
+                        scoreText = createScoreText(score)
+                        if linesCleared >= linesClearedForNewLevel:
+                            nextLevel()
+                            linesCleared %= linesClearedForNewLevel
 
-    if tickCount % (FPS//tickRate) == 0:
-        if not checkCollision(gb.board, f, (0, 1), 0):
-            f.fall()
-        else:
-            gb.board = drawMatrix
-            gb.board, removed_index = row_check(gb.board)
-            if len(removed_index) > 0:
-                gb.board = empty_row_removal(gb.board, removed_index)
-                linesCleared += len(removed_index)
-                score += calcPoints(level, len(removed_index))
-                scoreText = createScoreText(score)
-                if linesCleared >= linesClearedForNewLevel:
-                    nextLevel()
-                    linesCleared %= linesClearedForNewLevel
-
-            f = nextShape(queue, gb.board)
+                f = nextShape(queue, gb.board)
 
 
     for event in pg.event.get():
@@ -391,7 +388,7 @@ while True:
             if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
                 moveIfPossible(gb.board, f, (0, 1))
 
-            tickCount += 1
+        tickCount += 1
 
-            pg.display.update()
-            clock.tick(FPS)
+        pg.display.update()
+        clock.tick(FPS)
