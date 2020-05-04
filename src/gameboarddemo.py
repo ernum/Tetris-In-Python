@@ -32,6 +32,48 @@ start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      0, board_rows, board_cols, 20)
 
+tickRate = 1  # Times per second shapes are falling downwards
+tickCount = 1
+
+queue = generateShapes.figureQueue(4, BLOCK_SIZE)
+
+sliderWidth = 20
+sliderHeight = 60
+sliderMargin = 20
+sliderRect = (width - sliderWidth - sliderMargin, height -
+              sliderHeight - sliderMargin, sliderWidth, sliderHeight)
+
+volumeIconW = 40
+muteClickRadius = 20
+
+volume = VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
+                          muteClickRadius)
+
+volume.val = pg.mixer.music.get_volume()
+volume.muted = pygameTitleScreen.muted
+
+keyCheckRate = 20  # How many times per second the game checks if a key is held down
+das = 0.2  # delayed auto shift, how long after pressing a key it will be checked again. In seconds
+
+lastPressed = [0, 0, 0]  # Left, Down, Right
+
+level = -1
+levelText = None
+levelTextSize = 50
+
+linesCleared = 0
+linesClearedForNewLevel = 10
+
+score = 0
+
+levelTextCenterY = int(height - 0.5 * levelTextSize - 15)
+scoreTextCenterY = int(levelTextCenterY - levelTextSize)
+
+pointsPerLine = [40, 100, 300, 1200]
+
+def framePerGridToTickrate(fpg, fps):
+    return 1/fpg * fps
+
 def matrix_merge(currentMatrix, figure):
     rotation = figure.currentRotation
     fig_m = figure.shapeList[rotation]
@@ -69,10 +111,14 @@ def nextShape(queue, currentMatrix):
         figure.currentRotation]
     middle = len(currentMatrix[0])//2 - len(fig_m)//2
     figure.matrixPosX = middle
+
+    if checkCollision(currentMatrix, figure, (0,0), 0):
+        gameOverPage()
+
     return figure
 
 
-def gameOver(figure, matrix):
+def gameOver(matrix):
     top_row = [a for a in matrix[0]]
     for i in top_row:
         if i != 0 and i != 8:
@@ -173,32 +219,85 @@ def reset():
     gb.drawMatrix(dis, ghostMatrix)
     pg.display.update()
 
+def gameOverPage():
+    global playAgain
+    playAgain = False
+    gameOverFontSize = 50
+    buttonWidth = 150
+    buttonHeight = 50
+    buttonFontSize = 20
+    buttonHoverColor = (200, 200, 200)
 
-tickRate = 1  # Times per second shapes are falling downwards
-tickCount = 1
+    game = Text("GAME", (0, 0, 0),
+                gameOverFontSize, (250, 100))
+    over = Text("OVER", (0, 0, 0),
+                gameOverFontSize, (250, 150))
+    playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
+                             (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play,
+                             buttonHoverColor)
+    exit_button = Button((175, 255, buttonWidth, buttonHeight),
+                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
 
-queue = generateShapes.figureQueue(4, BLOCK_SIZE)
+    for i in range(len(gb.board) - 2, -1, -1):
+        for j in range(1, len(gb.board[i]) - 1):
+            gb.board[i][j] = 8
+            drawMatrix = matrix_merge(gb.board, f)
+            gb.drawMatrix(dis, drawMatrix)
+            pg.display.update()
+            clock.tick(FPS)
+
+    while not playAgain:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                raise SystemExit
+
+            if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                p = pg.mouse.get_pos()
+                if playAgainButton.isInside(p):
+                    playAgainButton.click()
+                if exit_button.isInside(p):
+                    exit_button.click()
+
+        if playAgainButton.isInside(pg.mouse.get_pos()):
+            playAgainButton.hover()
+        else:
+            playAgainButton.noHover()
+
+        if exit_button.isInside(pg.mouse.get_pos()):
+            exit_button.hover()
+        else:
+            exit_button.noHover()
+
+        game.draw(dis)
+        over.draw(dis)
+        playAgainButton.draw(dis)
+        exit_button.draw(dis)
+        pg.display.update()
+    reset()
+
+def nextLevel():
+    global level, levelText, tickRate
+    level += 1
+    levelText = Text("Level: " + str(level), (255,255,255), levelTextSize, (width//2, levelTextCenterY))
+    tickRate = levelsTickrate[len(levelsTickrate)-1] if level >= len(levelsTickrate) else levelsTickrate[level]
+
+def createScoreText(score):
+    return Text("Score: " + str(score), (0,255,0), levelTextSize, (width//2, scoreTextCenterY))
+
+def calcPoints(level, linesCleared):
+    return pointsPerLine[linesCleared-1] * (level + 1)
+
+levelsFPG = [i for i in range(48,3,-5)] + [6] + [5]*3 + [4]*3 + [3]*3 + [2]*10 + [1]
+levelsTickrate = [framePerGridToTickrate(i, FPS) for i in levelsFPG]
+scoreText = createScoreText(0)
+
 f = nextShape(queue, gb.board)
+nextLevel()
 
-sliderWidth = 20
-sliderHeight = 60
-sliderMargin = 20
-sliderRect = (width - sliderWidth - sliderMargin, height -
-              sliderHeight - sliderMargin, sliderWidth, sliderHeight)
+tickReset = False
 
-volumeIconW = 40
-muteClickRadius = 20
-
-volume = VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sliderRect[1] + sliderRect[3] / 2),
-                          muteClickRadius)
-
-volume.val = pg.mixer.music.get_volume()
-volume.muted = pygameTitleScreen.muted
-
-keyCheckRate = 20  # How many times per second the game checks if a key is held down
-das = 0.2  # delayed auto shift, how long after pressing a key it will be checked again. In seconds
-
-lastPressed = [0, 0, 0]  # Left, Down, Right
+landAnimation = None
+rowAnimations = True
 
 tickReset = False
 
@@ -226,73 +325,19 @@ while True:
         pause_img = pg.transform.scale(pause_img, ((board_cols - 2)*21 + 1, 100))
         dis.blit(pause_img, ((width - 21*board_cols)/2 + BLOCK_SIZE, 70))
 
-    if game_state == RUNNING:
-        if gameOver(f, gb.board):
-
-            fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
-            playAgain = False
-            gameOverFontSize = 50
-            buttonWidth = 150
-            buttonHeight = 50
-            buttonFontSize = 20
-            buttonHoverColor = (200, 200, 200)
-
-            tickReset = True
-            if landAnimation != None:
-                landAnimation.finished = True
-
-            game = Text("GAME", (0, 0, 0),
-                        gameOverFontSize, (250, 100))
-            over = Text("OVER", (0, 0, 0),
-                        gameOverFontSize, (250, 150))
-            playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
-                                     (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
-            exit = Button((175, 255, buttonWidth, buttonHeight),
-                          (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit, buttonHoverColor)
-
-            for i in range(len(gb.board)-2, -1, -1):
-                for j in range(1, len(gb.board[i])-1):
-                    gb.board[i][j] = 8
-                    drawMatrix = matrix_merge(gb.board, f)
-                    gb.drawMatrix(dis, drawMatrix)
-                    pg.display.update()
-                    clock.tick(FPS)
-
-            while not playAgain:
-                for event in pg.event.get():
-                    if event.type == pg.QUIT:
-                        raise SystemExit
-
-                    if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                        p = pg.mouse.get_pos()
-                        if playAgainButton.isInside(p):
-                            playAgainButton.click()
-                        if exit.isInside(p):
-                            exit.click()
-
-                if playAgainButton.isInside(pg.mouse.get_pos()):
-                    playAgainButton.hover()
-                else:
-                    playAgainButton.noHover()
-
-                if exit.isInside(pg.mouse.get_pos()):
-                    exit.hover()
-                else:
-                    exit.noHover()
-
-                game.draw(dis)
-                over.draw(dis)
-                playAgainButton.draw(dis)
-                exit.draw(dis)
-                pg.display.update()
-            reset()
-
+       
     volume.draw(dis)
+    levelText.draw(dis)
+    scoreText.draw(dis)
+
+    if game_state == RUNNING:
+        if gameOver(gb.board):
+           gameOverPage()
+
 
     if landAnimation != None and not landAnimation.finished:
         landAnimation.draw(dis)
         landAnimation.next()
-
     pg.display.update()
 
     if pg.mouse.get_pressed()[0]:
@@ -323,8 +368,16 @@ while True:
                         Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
 
                     gb.board = empty_row_removal(gb.board, removed_index)
+                    linesCleared += len(removed_index)
+                    if linesCleared <= 4:
+                        score += calcPoints(level, linesCleared)
+                        scoreText = createScoreText(score)
+                        if linesCleared >= linesClearedForNewLevel:
+                            nextLevel()
+                            linesCleared %= linesClearedForNewLevel
 
                 f = nextShape(queue, gb.board)
+
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -371,5 +424,8 @@ while True:
             if pressed[pg.K_DOWN] and t-lastPressed[1] >= das:
                 moveIfPossible(gb.board, f, (0, 1))
 
-        clock.tick(FPS)
         tickCount += 1
+
+        pg.display.update()
+        clock.tick(FPS)
+
