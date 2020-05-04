@@ -5,6 +5,7 @@ import generateShapes
 import pygameTitleScreen
 import time
 from UI import *
+import Animations
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
@@ -30,7 +31,6 @@ pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
 gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
                      0, board_rows, board_cols, 20)
-
 
 def matrix_merge(currentMatrix, figure):
     rotation = figure.currentRotation
@@ -200,16 +200,22 @@ das = 0.2  # delayed auto shift, how long after pressing a key it will be checke
 
 lastPressed = [0, 0, 0]  # Left, Down, Right
 
+tickReset = False
+
+landAnimation = None
+rowAnimations = True
+
 RUNNING, PAUSE = 1,0
 game_state = RUNNING
 
-while True:
 
+while True:
     dis.fill(BG_COLOR)
     queue.draw(dis, width-90, 0, 90, 200)
 
     drawMatrix = matrix_merge(gb.board, f)
     ghostMatrix = drawGhost(gb.board, drawMatrix, f)
+
     gb.drawMatrix(dis, ghostMatrix)
 
 
@@ -223,13 +229,16 @@ while True:
         if gameOver(f, gb.board):
 
             fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
-            global playAgain
             playAgain = False
             gameOverFontSize = 50
             buttonWidth = 150
             buttonHeight = 50
             buttonFontSize = 20
             buttonHoverColor = (200, 200, 200)
+
+            tickReset = True
+            if landAnimation != None:
+                landAnimation.finished = True
 
             game = Text("GAME", (0, 0, 0),
                         gameOverFontSize, (250, 100))
@@ -278,19 +287,40 @@ while True:
             reset()
 
     volume.draw(dis)
+
+    if landAnimation != None and not landAnimation.finished:
+        landAnimation.draw(dis)
+        landAnimation.next()
+
     pg.display.update()
 
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
+
+    if not tickReset and checkCollision(gb.board,f,(0,1),0):
+        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
+        tickCount = 1
+        tickReset = True
+
     if game_state == RUNNING:
         if tickCount % (FPS//tickRate) == 0:
+            tickReset = False
             if not checkCollision(gb.board, f, (0, 1), 0):
                 f.fall()
             else:
                 gb.board = drawMatrix
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
+
+                    newSurf = pg.Surface((width,height))
+                    newSurf.fill(BG_COLOR)
+                    queue.draw(newSurf, width - 90, 0, 90, 200)
+                    gb.drawMatrix(newSurf, gb.board)
+
+                    if rowAnimations:
+                        Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
+
                     gb.board = empty_row_removal(gb.board, removed_index)
 
                 f = nextShape(queue, gb.board)
