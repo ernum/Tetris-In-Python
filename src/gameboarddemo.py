@@ -219,7 +219,7 @@ while True:
 
     if game_state == RUNNING:
         if gameOver(f, gb.board):
-            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f)
+            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, reset)
             reset()
 
     volume.draw(dis)
