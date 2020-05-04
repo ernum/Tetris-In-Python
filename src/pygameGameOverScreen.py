@@ -18,17 +18,23 @@ def play():
     playAgain = not playAgain
 
 
-def gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
+def titleScreen():
+    pass
+
+
+def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     fontPath = "../fonts/game_over.ttf"
 
     gameOverFontSize = 50
     textPositionX = 250
-    textPositionY = 100
+    textPositionY = 70
     textColor = (0, 0, 0)
-    
+
     buttonWidth = 150
     buttonHeight = 50
     buttonFontSize = 20
+    buttonPositionX = 175
+    buttonPositionY = 175
     buttonHoverColor = (200, 200, 200)
 
     tickReset = True
@@ -39,10 +45,12 @@ def gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
                 gameOverFontSize, (textPositionX, textPositionY))
     over = Text("OVER", textColor,
                 gameOverFontSize, (textPositionX, textPositionY + 50))
-    playAgainButton = Button((buttonWidth + 25, buttonWidth + 50, buttonWidth, buttonHeight),
+    playAgainButton = Button((buttonPositionX, buttonPositionY, buttonWidth, buttonHeight),
                              (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
-    exitButton = Button((buttonWidth + 25, buttonWidth + 105, buttonWidth, buttonHeight),
+    exitButton = Button((buttonPositionX, buttonPositionY + 55, buttonWidth, buttonHeight),
                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
+    titleButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
+                         (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), titleScreen, buttonHoverColor)
 
     for i in range(len(gb.board)-2, -1, -1):
         for j in range(1, len(gb.board[i])-1):
@@ -78,6 +86,7 @@ def gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
         over.draw(dis)
         playAgainButton.draw(dis)
         exitButton.draw(dis)
+        titleButton.draw(dis)
 
         pg.display.update()
 

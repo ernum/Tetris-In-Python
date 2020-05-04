@@ -114,7 +114,7 @@ def nextShape(queue, currentMatrix):
     figure.matrixPosX = middle
 
     if checkCollision(currentMatrix, figure, (0,0), 0):
-        pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
+        pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
 
     return figure
 
@@ -124,7 +124,7 @@ def gameOver(matrix):
     for i in top_row:
         if i != 0 and i != 8:
             return True
-    return False
+    return True
 
 # Checks the board matrix for full rows from the bottom.
 
@@ -262,7 +262,7 @@ while True:
 
     if game_state == RUNNING:
         if gameOver(gb.board):
-            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
+            pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
             reset()
             
     if landAnimation != None and not landAnimation.finished:
