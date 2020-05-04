@@ -203,6 +203,7 @@ lastPressed = [0, 0, 0]  # Left, Down, Right
 tickReset = False
 
 landAnimation = None
+rowAnimations = True
 
 RUNNING, PAUSE = 1,0
 game_state = RUNNING
@@ -228,13 +229,16 @@ while True:
         if gameOver(f, gb.board):
 
             fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
-            global playAgain
             playAgain = False
             gameOverFontSize = 50
             buttonWidth = 150
             buttonHeight = 50
             buttonFontSize = 20
             buttonHoverColor = (200, 200, 200)
+
+            tickReset = True
+            if landAnimation != None:
+                landAnimation.finished = True
 
             game = Text("GAME", (0, 0, 0),
                         gameOverFontSize, (250, 100))
@@ -293,40 +297,33 @@ while True:
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
-    if game_state == RUNNING:
-        if tickCount % (FPS//tickRate) == 0:
-            if not checkCollision(gb.board, f, (0, 1), 0):
-                f.fall()
-            else:
-                gb.board = drawMatrix
-                gb.board, removed_index = row_check(gb.board)
-                if len(removed_index) > 0:
-                    gb.board = empty_row_removal(gb.board, removed_index)
 
     if not tickReset and checkCollision(gb.board,f,(0,1),0):
         landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
         tickCount = 1
         tickReset = True
 
-    if tickCount % (FPS//tickRate) == 0:
-        tickReset = False
-        if not checkCollision(gb.board, f, (0, 1), 0):
-            f.fall()
-        else:
-            gb.board = drawMatrix
-            gb.board, removed_index = row_check(gb.board)
-            if len(removed_index) > 0:
+    if game_state == RUNNING:
+        if tickCount % (FPS//tickRate) == 0:
+            tickReset = False
+            if not checkCollision(gb.board, f, (0, 1), 0):
+                f.fall()
+            else:
+                gb.board = drawMatrix
+                gb.board, removed_index = row_check(gb.board)
+                if len(removed_index) > 0:
 
-                newSurf = pg.Surface((width,height))
-                newSurf.fill(BG_COLOR)
-                queue.draw(newSurf, width - 90, 0, 90, 200)
-                gb.drawMatrix(newSurf, gb.board)
+                    newSurf = pg.Surface((width,height))
+                    newSurf.fill(BG_COLOR)
+                    queue.draw(newSurf, width - 90, 0, 90, 200)
+                    gb.drawMatrix(newSurf, gb.board)
 
-                Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
+                    if rowAnimations:
+                        Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
 
-                gb.board = empty_row_removal(gb.board, removed_index)
+                    gb.board = empty_row_removal(gb.board, removed_index)
 
-            f = nextShape(queue, gb.board)
+                f = nextShape(queue, gb.board)
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
