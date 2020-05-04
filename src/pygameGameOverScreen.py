@@ -18,11 +18,10 @@ def play():
     playAgain = not playAgain
 
 
-def titleScreen():
-    pass
-
-
 def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
+    """This function will quit if the user chooses exit, return true if the user chooses 
+    play again or return false if the user chooses title."""
+
     fontPath = "../fonts/game_over.ttf"
 
     gameOverFontSize = 50
@@ -48,7 +47,7 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     playAgainButton = Button((buttonPositionX, buttonPositionY, buttonWidth, buttonHeight),
                              (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
     titleButton = Button((buttonPositionX, buttonPositionY + 55, buttonWidth, buttonHeight),
-                         (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), titleScreen, buttonHoverColor)
+                         (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), None, buttonHoverColor)
     exitButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
 
@@ -62,22 +61,29 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
 
     while not playAgain:
         for event in pg.event.get():
+            p = pg.mouse.get_pos()
             if event.type == pg.QUIT:
                 raise SystemExit
 
             if event.type == pg.MOUSEBUTTONUP and event.button == 1:
-                p = pg.mouse.get_pos()
                 if playAgainButton.isInside(p):
                     playAgainButton.click()
+                if titleButton.isInside(p):
+                    return False
                 if exitButton.isInside(p):
                     exitButton.click()
 
-            if playAgainButton.isInside(pg.mouse.get_pos()):
+            if playAgainButton.isInside(p):
                 playAgainButton.hover()
             else:
                 playAgainButton.noHover()
 
-            if exitButton.isInside(pg.mouse.get_pos()):
+            if titleButton.isInside(p):
+                titleButton.hover()
+            else:
+                titleButton.noHover()
+
+            if exitButton.isInside(p):
                 exitButton.hover()
             else:
                 exitButton.noHover()
@@ -92,3 +98,4 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
 
         clock.tick(FPS)
     play()
+    return True
