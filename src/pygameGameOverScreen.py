@@ -23,6 +23,7 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     play again or return false if the user chooses title."""
 
     fontPath = "../fonts/game_over.ttf"
+    w, h = dis.get_rect().size
 
     gameOverFontSize = 50
     textPositionX = 250
@@ -36,20 +37,36 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     buttonPositionY = 175
     buttonHoverColor = (200, 200, 200)
 
+    volumeIconW = 40
+    muteClickRadius = 20
+
+    sliderWidth = 20
+    sliderHeight = 60
+    sliderMargin = 20
+    sliderRect = (w-sliderWidth-sliderMargin, h-sliderHeight -
+                  sliderMargin, sliderWidth, sliderHeight)
+
     tickReset = True
     if landAnimation != None:
         landAnimation.finished = True
 
+    # Text
     game = Text("GAME", textColor,
                 gameOverFontSize, (textPositionX, textPositionY))
     over = Text("OVER", textColor,
                 gameOverFontSize, (textPositionX, textPositionY + 50))
+
+    # Buttons
     playAgainButton = Button((buttonPositionX, buttonPositionY, buttonWidth, buttonHeight),
                              (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
     titleButton = Button((buttonPositionX, buttonPositionY + 55, buttonWidth, buttonHeight),
                          (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), None, buttonHoverColor)
     exitButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
+
+    # Volume
+    volume = VolumeController(
+        sliderRect, (sliderRect[0]-volumeIconW/2 - 10, sliderRect[1]+sliderRect[3]/2), muteClickRadius)
 
     for i in range(len(gb.board)-2, -1, -1):
         for j in range(1, len(gb.board[i])-1):
@@ -61,11 +78,11 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
 
     while not playAgain:
         for event in pg.event.get():
-            p = pg.mouse.get_pos()
             if event.type == pg.QUIT:
                 raise SystemExit
 
             if event.type == pg.MOUSEBUTTONUP and event.button == 1:
+                p = pg.mouse.get_pos()
                 if playAgainButton.isInside(p):
                     playAgainButton.click()
                 if titleButton.isInside(p):
@@ -73,29 +90,38 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
                 if exitButton.isInside(p):
                     exitButton.click()
 
-            if playAgainButton.isInside(p):
-                playAgainButton.hover()
-            else:
-                playAgainButton.noHover()
+                if volume.buttonInside(p):
+                    volume.click()
 
-            if titleButton.isInside(p):
-                titleButton.hover()
-            else:
-                titleButton.noHover()
+        if playAgainButton.isInside(pg.mouse.get_pos()):
+            playAgainButton.hover()
+        else:
+            playAgainButton.noHover()
 
-            if exitButton.isInside(p):
-                exitButton.hover()
-            else:
-                exitButton.noHover()
+        if titleButton.isInside(pg.mouse.get_pos()):
+            titleButton.hover()
+        else:
+            titleButton.noHover()
+
+        if exitButton.isInside(pg.mouse.get_pos()):
+            exitButton.hover()
+        else:
+            exitButton.noHover()
+
+        if pg.mouse.get_pressed()[0]:
+            if volume.update():
+                pg.mixer.music.set_volume(volume.val)
 
         game.draw(dis)
         over.draw(dis)
         playAgainButton.draw(dis)
         exitButton.draw(dis)
         titleButton.draw(dis)
+        volume.draw(dis)
 
         pg.display.update()
 
         clock.tick(FPS)
+
     play()
     return True
