@@ -264,12 +264,10 @@ while True:
         if gameOver(gb.board):
             pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
             reset()
-
+            
     if landAnimation != None and not landAnimation.finished:
         landAnimation.draw(dis)
         landAnimation.next()
-
-    pg.display.update()
 
     if pg.mouse.get_pressed()[0]:
         if volume.update():
@@ -279,8 +277,9 @@ while True:
         landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
         tickCount = 1
         tickReset = True
-
+        
     if game_state == RUNNING:
+
         if tickCount % (FPS//tickRate) == 0:
             tickReset = False
             if not checkCollision(gb.board, f, (0, 1), 0):
@@ -300,8 +299,9 @@ while True:
 
                     gb.board = empty_row_removal(gb.board, removed_index)
                     linesCleared += len(removed_index)
-                    if linesCleared <= 4:
-                        score += calcPoints(level, linesCleared)
+                    
+                    if len(removed_index) <= 4:
+                        score += calcPoints(level, len(removed_index))
                         scoreText = createScoreText(score)
                         if linesCleared >= linesClearedForNewLevel:
                             nextLevel()
@@ -359,4 +359,3 @@ while True:
 
         pg.display.update()
         clock.tick(FPS)
-
