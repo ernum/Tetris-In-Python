@@ -78,7 +78,7 @@ def gameOver(figure, matrix):
     for i in top_row:
         if i != 0 and i != 8:
             return True
-    return True
+    return False
 
 # Checks the board matrix for full rows from the bottom.
 
@@ -219,7 +219,7 @@ while True:
 
     if game_state == RUNNING:
         if gameOver(f, gb.board):
-            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f)
+            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
             reset()
 
     volume.draw(dis)
