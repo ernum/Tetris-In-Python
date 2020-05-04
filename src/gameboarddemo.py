@@ -319,19 +319,15 @@ while True:
         pause_img = pg.transform.scale(pause_img, ((board_cols - 2)*21 + 1, 100))
         dis.blit(pause_img, ((width - 21*board_cols)/2 + BLOCK_SIZE, 70))
 
-
-    if gameOver(gb.board):
-        gameOverPage()
-
        
     volume.draw(dis)
     levelText.draw(dis)
     scoreText.draw(dis)
 
     if game_state == RUNNING:
-        if gameOver(f, gb.board):
+        if gameOver(gb.board):
            gameOverPage()
-            
+
 
     if landAnimation != None and not landAnimation.finished:
         landAnimation.draw(dis)
