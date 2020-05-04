@@ -1,12 +1,11 @@
 import pygame as pg
-import pygameTitleScreen
 import time
 from UI import *
-import Animations
 
 FPS = 60
 clock = pg.time.Clock()
 playAgain = False
+fontPath = "../fonts/game_over.ttf"
 
 
 def exit_game():
@@ -18,11 +17,10 @@ def play():
     playAgain = not playAgain
 
 
-def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
+def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
     """This function will quit if the user chooses exit, return true if the user chooses 
     play again or return false if the user chooses title."""
 
-    fontPath = "../fonts/game_over.ttf"
     w, h = dis.get_rect().size
 
     gameOverFontSize = 50
@@ -63,10 +61,6 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
                          (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), None, buttonHoverColor)
     exitButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
-
-    # Volume
-    volume = VolumeController(
-        sliderRect, (sliderRect[0]-volumeIconW/2 - 10, sliderRect[1]+sliderRect[3]/2), muteClickRadius)
 
     for i in range(len(gb.board)-2, -1, -1):
         for j in range(1, len(gb.board[i])-1):
@@ -118,6 +112,7 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
         exitButton.draw(dis)
         titleButton.draw(dis)
         volume.draw(dis)
+
 
         pg.display.update()
 

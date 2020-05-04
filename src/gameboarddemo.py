@@ -116,7 +116,7 @@ def nextShape(queue, currentMatrix):
     figure.matrixPosX = middle
 
     if checkCollision(currentMatrix, figure, (0, 0), 0):
-        if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
+        if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
             reset()
         else:
             pygameTitleScreen.titlePage(dis)
