@@ -36,6 +36,15 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     buttonPositionY = 175
     buttonHoverColor = (200, 200, 200)
 
+    volumeIconW = 40
+    muteClickRadius = 20
+
+    sliderWidth = 20
+    sliderHeight = 60
+    sliderMargin = 20
+    sliderRect = (w-sliderWidth-sliderMargin, h-sliderHeight -
+                  sliderMargin, sliderWidth, sliderHeight)
+
     tickReset = True
     if landAnimation != None:
         landAnimation.finished = True
@@ -50,6 +59,8 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
                          (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), None, buttonHoverColor)
     exitButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
+    volume = VolumeController(
+        sliderRect, (sliderRect[0]-volumeIconW/2 - 10, sliderRect[1]+sliderRect[3]/2), muteClickRadius)
 
     for i in range(len(gb.board)-2, -1, -1):
         for j in range(1, len(gb.board[i])-1):
@@ -72,6 +83,13 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
                     return False
                 if exitButton.isInside(p):
                     exitButton.click()
+
+                if volume.buttonInside(p):
+                    volume.click()
+
+            if pg.mouse.get_pressed()[0]:
+                if volume.update():
+                    pg.mixer.music.set_volume(volume.val)
 
             if playAgainButton.isInside(p):
                 playAgainButton.hover()
