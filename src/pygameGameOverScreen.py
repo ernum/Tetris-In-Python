@@ -19,8 +19,13 @@ def play():
 
 
 def gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
-    fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
+    fontPath = "../fonts/game_over.ttf"
+
     gameOverFontSize = 50
+    textPositionX = 250
+    textPositionY = 100
+    textColor = (0, 0, 0)
+    
     buttonWidth = 150
     buttonHeight = 50
     buttonFontSize = 20
@@ -30,13 +35,13 @@ def gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
     if landAnimation != None:
         landAnimation.finished = True
 
-    game = Text("GAME", (0, 0, 0),
-                gameOverFontSize, (250, 100))
-    over = Text("OVER", (0, 0, 0),
-                gameOverFontSize, (250, 150))
-    playAgainButton = Button((175, 200, buttonWidth, buttonHeight),
+    game = Text("GAME", textColor,
+                gameOverFontSize, (textPositionX, textPositionY))
+    over = Text("OVER", textColor,
+                gameOverFontSize, (textPositionX, textPositionY + 50))
+    playAgainButton = Button((buttonWidth + 25, buttonWidth + 50, buttonWidth, buttonHeight),
                              (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
-    exitButton = Button((175, 255, buttonWidth, buttonHeight),
+    exitButton = Button((buttonWidth + 25, buttonWidth + 105, buttonWidth, buttonHeight),
                         (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
 
     for i in range(len(gb.board)-2, -1, -1):
