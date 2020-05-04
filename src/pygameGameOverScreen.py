@@ -47,10 +47,10 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
                 gameOverFontSize, (textPositionX, textPositionY + 50))
     playAgainButton = Button((buttonPositionX, buttonPositionY, buttonWidth, buttonHeight),
                              (255, 255, 255), 0, (100, 100, 100), "PLAY AGAIN", buttonFontSize, (0, 0, 0), play, buttonHoverColor)
-    exitButton = Button((buttonPositionX, buttonPositionY + 55, buttonWidth, buttonHeight),
-                        (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
-    titleButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
+    titleButton = Button((buttonPositionX, buttonPositionY + 55, buttonWidth, buttonHeight),
                          (255, 255, 255), 0, (100, 100, 100), "TITLE", buttonFontSize, (0, 0, 0), titleScreen, buttonHoverColor)
+    exitButton = Button((buttonPositionX, buttonPositionY + 110, buttonWidth, buttonHeight),
+                        (255, 255, 255), 0, (100, 100, 100), "EXIT", buttonFontSize, (0, 0, 0), exit_game, buttonHoverColor)
 
     for i in range(len(gb.board)-2, -1, -1):
         for j in range(1, len(gb.board[i])-1):
