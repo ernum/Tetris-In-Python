@@ -17,6 +17,7 @@ blue = (0, 0, 255)
 pink = (200, 20, 250)
 colors = [black, yellow, turq, green, red, orange, blue, pink, white]
 t = time.time()
+FPS = 60
 # do stuff
 elapsed = time.time() - t
 
@@ -29,7 +30,7 @@ def exit():
 
 def start():
     global started
-    started = True
+    started = not started
 
 
 started = False
@@ -159,4 +160,6 @@ def titlePage(dis):
 
         pg.display.update()
 
-        clock.tick(60)
+        clock.tick(FPS)
+    start()
+

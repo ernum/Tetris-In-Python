@@ -72,8 +72,10 @@ scoreTextCenterY = int(levelTextCenterY - levelTextSize)
 
 pointsPerLine = [40, 100, 300, 1200]
 
+
 def framePerGridToTickrate(fpg, fps):
     return 1/fpg * fps
+
 
 def matrix_merge(currentMatrix, figure):
     rotation = figure.currentRotation
@@ -113,8 +115,11 @@ def nextShape(queue, currentMatrix):
     middle = len(currentMatrix[0])//2 - len(fig_m)//2
     figure.matrixPosX = middle
 
-    if checkCollision(currentMatrix, figure, (0,0), 0):
-        pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
+    if checkCollision(currentMatrix, figure, (0, 0), 0):
+        if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
+            reset()
+        else:
+            pygameTitleScreen.titlePage(dis)
 
     return figure
 
@@ -159,9 +164,9 @@ def rotationCollision(figure, clockwise):
     if clockwise > 1:
         if f.shape != 'I':
             movements = [[(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 0 >> 1
-                         [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],  # 1 >> 2
-                         [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 2 >> 3
-                         [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 0
+                         [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],      # 1 >> 2
+                         [(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],     # 2 >> 3
+                         [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]   # 3 >> 0
         else:
             movements = [[(0, 0), (-2, 0), (1, 0), (-2, -1), (1, 2)],  # 0 >> 1
                          [(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)],  # 1 >> 2
@@ -169,10 +174,10 @@ def rotationCollision(figure, clockwise):
                          [(0, 0), (1, 0), (-2, 0), (1, -2), (-2, 1)]]  # 3 >> 0
     else:
         if f.shape != 'I':
-            movements = [[(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],  # 0 >> 3
-                         [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],  # 1 >> 0
+            movements = [[(0, 0), (1, 0), (1, 1), (0, -2), (1, -2)],     # 0 >> 3
+                         [(0, 0), (1, 0), (1, -1), (0, 2), (1, 2)],      # 1 >> 0
                          [(0, 0), (-1, 0), (-1, 1), (0, -2), (-1, -2)],  # 2 >> 1
-                         [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]  # 3 >> 2
+                         [(0, 0), (-1, 0), (-1, -1), (0, 2), (-1, 2)]]   # 3 >> 2
         else:
             movements = [[(0, 0), (-1, 0), (2, 0), (-1, 2), (2, -1)],  # 0 >> 3
                          [(0, 0), (2, 0), (-1, 0), (2, 1), (-1, -2)],  # 1 >> 0
@@ -211,19 +216,27 @@ def reset():
     gb.drawMatrix(dis, ghostMatrix)
     pg.display.update()
 
+
 def nextLevel():
     global level, levelText, tickRate
     level += 1
-    levelText = Text("Level: " + str(level), (255,255,255), levelTextSize, (width//2, levelTextCenterY))
-    tickRate = levelsTickrate[len(levelsTickrate)-1] if level >= len(levelsTickrate) else levelsTickrate[level]
+    levelText = Text("Level: " + str(level), (255, 255, 255),
+                     levelTextSize, (width//2, levelTextCenterY))
+    tickRate = levelsTickrate[len(
+        levelsTickrate)-1] if level >= len(levelsTickrate) else levelsTickrate[level]
+
 
 def createScoreText(score):
-    return Text("Score: " + str(score), (0,255,0), levelTextSize, (width//2, scoreTextCenterY))
+    return Text("Score: " + str(score), (0, 255, 0), levelTextSize, (width//2, scoreTextCenterY))
+
 
 def calcPoints(level, linesCleared):
     return pointsPerLine[linesCleared-1] * (level + 1)
 
-levelsFPG = [i for i in range(48,3,-5)] + [6] + [5]*3 + [4]*3 + [3]*3 + [2]*10 + [1]
+
+levelsFPG = [i for i in range(48, 3, -5)] + [6] + \
+    [5]*3 + [4]*3 + [3]*3 + [2]*10 + [1]
+
 levelsTickrate = [framePerGridToTickrate(i, FPS) for i in levelsFPG]
 scoreText = createScoreText(0)
 
@@ -235,7 +248,7 @@ tickReset = False
 landAnimation = None
 rowAnimations = True
 
-RUNNING, PAUSE = 1,0
+RUNNING, PAUSE = 1, 0
 game_state = RUNNING
 
 
@@ -248,23 +261,22 @@ while True:
 
     gb.drawMatrix(dis, ghostMatrix)
 
-
     # Draw pause message
     if game_state == PAUSE:
         pause_img = pg.image.load("../images/pauseScreen3.png")
-        pause_img = pg.transform.scale(pause_img, ((board_cols - 2)*21 + 1, 100))
+        pause_img = pg.transform.scale(
+            pause_img, ((board_cols - 2)*21 + 1, 100))
         dis.blit(pause_img, ((width - 21*board_cols)/2 + BLOCK_SIZE, 70))
 
-       
     volume.draw(dis)
     levelText.draw(dis)
     scoreText.draw(dis)
 
     if game_state == RUNNING:
         if gameOver(gb.board):
-            pygameGameOverScreen.gameOveAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset)
-            reset()
-            
+            if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
+                reset()
+
     if landAnimation != None and not landAnimation.finished:
         landAnimation.draw(dis)
         landAnimation.next()
@@ -273,11 +285,11 @@ while True:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
 
-    if not tickReset and checkCollision(gb.board,f,(0,1),0):
+    if not tickReset and checkCollision(gb.board, f, (0, 1), 0):
         landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
         tickCount = 1
         tickReset = True
-        
+
     if game_state == RUNNING:
 
         if tickCount % (FPS//tickRate) == 0:
@@ -289,17 +301,18 @@ while True:
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
 
-                    newSurf = pg.Surface((width,height))
+                    newSurf = pg.Surface((width, height))
                     newSurf.fill(BG_COLOR)
                     queue.draw(newSurf, width - 90, 0, 90, 200)
                     gb.drawMatrix(newSurf, gb.board)
 
                     if rowAnimations:
-                        Animations.RowAnimation(removed_index,dis,newSurf).play(dis)
+                        Animations.RowAnimation(
+                            removed_index, dis, newSurf).play(dis)
 
                     gb.board = empty_row_removal(gb.board, removed_index)
                     linesCleared += len(removed_index)
-                    
+
                     if len(removed_index) <= 4:
                         score += calcPoints(level, len(removed_index))
                         scoreText = createScoreText(score)
@@ -308,7 +321,6 @@ while True:
                             linesCleared %= linesClearedForNewLevel
 
                 f = nextShape(queue, gb.board)
-
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
