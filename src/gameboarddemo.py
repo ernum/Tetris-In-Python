@@ -12,6 +12,7 @@ BG_COLOR = (0, 0, 0)
 FPS = 60
 width, height = 500, 500
 dis = pg.display.set_mode((width, height))
+pg.mixer.pre_init(44100, -16, 1, 128)
 pg.init()
 clock = pg.time.Clock()
 
@@ -27,6 +28,13 @@ pg.mixer.init()
 pg.mixer.music.load("../Sound/Soundtrack/electrify.wav")
 pg.mixer.music.play(-1)
 pg.mixer.music.set_volume(0.6)
+# Sound effects
+rot_sound = pg.mixer.Sound("../Sound/SoundEffects/Swoosh.wav")
+rot_sound.set_volume(0.5)
+impact_sound = pg.mixer.Sound("../Sound/SoundEffects/Impact.wav")
+impact_sound.set_volume(0.4)
+rem_sound = pg.mixer.Sound("../Sound/SoundEffects/Removal.wav")
+rem_sound.set_volume(0.5)
 
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
@@ -286,6 +294,7 @@ while True:
             pg.mixer.music.set_volume(volume.val)
 
     if not tickReset and checkCollision(gb.board, f, (0, 1), 0):
+        pg.mixer.Sound.play(impact_sound)
         landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
         tickCount = 1
         tickReset = True
@@ -300,7 +309,7 @@ while True:
                 gb.board = drawMatrix
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
-
+                    pg.mixer.Sound.play(rem_sound)
                     newSurf = pg.Surface((width, height))
                     newSurf.fill(BG_COLOR)
                     queue.draw(newSurf, width - 90, 0, 90, 200)
@@ -335,8 +344,10 @@ while True:
             # Controls
             if game_state == RUNNING:
                 if event.key == pg.K_x:
+                    pg.mixer.Sound.play(rot_sound)
                     rotationCollision(f, True)
                 if event.key == pg.K_z:
+                    pg.mixer.Sound.play(rot_sound)
                     rotationCollision(f, False)
 
                 if event.key == pg.K_LEFT:
