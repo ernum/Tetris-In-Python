@@ -35,6 +35,9 @@ impact_sound = pg.mixer.Sound("../Sound/SoundEffects/Impact.wav")
 impact_sound.set_volume(0.4)
 rem_sound = pg.mixer.Sound("../Sound/SoundEffects/Removal.wav")
 rem_sound.set_volume(0.5)
+err_sound = pg.mixer.Sound("../Sound/SoundEffects/error.wav")
+err_sound.set_volume(0.5)
+
 
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
@@ -139,9 +142,8 @@ def gameOver(matrix):
             return True
     return False
 
+
 # Checks the board matrix for full rows from the bottom.
-
-
 def row_check(currentMatrix):
     removed_index = []
     for r in range(len(currentMatrix)-2, -1, -1):
@@ -195,9 +197,11 @@ def rotationCollision(figure, clockwise):
     # Test movements
     for i in movements[f.currentRotation]:
         if not checkCollision(gb.board, f, i, 1 if clockwise else -1):
+            pg.mixer.Sound.play(rot_sound)
             f.rotate_clockwise() if clockwise else f.rotate_anticlockwise()
             f.move(i)
-            break
+            return True
+    return False
 
 
 def moveIfPossible(board, f, move):
@@ -344,11 +348,11 @@ while True:
             # Controls
             if game_state == RUNNING:
                 if event.key == pg.K_x:
-                    pg.mixer.Sound.play(rot_sound)
-                    rotationCollision(f, True)
+                    if not rotationCollision(f, True):
+                        pg.mixer.Sound.play(err_sound)
                 if event.key == pg.K_z:
-                    pg.mixer.Sound.play(rot_sound)
-                    rotationCollision(f, False)
+                    if not rotationCollision(f, False):
+                        pg.mixer.Sound.play(err_sound)
 
                 if event.key == pg.K_LEFT:
                     moveIfPossible(gb.board, f, (-1, 0))
