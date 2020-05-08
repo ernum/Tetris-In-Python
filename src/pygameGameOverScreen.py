@@ -6,6 +6,8 @@ FPS = 60
 clock = pg.time.Clock()
 playAgain = False
 fontPath = "../fonts/game_over.ttf"
+gameover_sound = pg.mixer.Sound("../Sound/SoundEffects/gameover.wav")
+gameover_sound.set_volume(0.5)
 
 
 def exit_game():
@@ -20,6 +22,7 @@ def play():
 def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
     """This function will quit if the user chooses exit, return true if the user chooses 
     play again or return false if the user chooses title."""
+    pg.mixer.Sound.play(gameover_sound)
 
     w, h = dis.get_rect().size
 
