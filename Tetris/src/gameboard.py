@@ -1,4 +1,5 @@
 import pygame as pg
+import pathlib
 
 pg.init()
 
@@ -14,15 +15,36 @@ blue = (0, 0, 255)
 pink = (200, 20, 250)
 colors = [black, yellow, turq, green, red, orange, blue, pink, white]
 
-walls_img = pg.image.load("../images/block2020.png")
-yel_img = pg.image.load("../images/yel.png")
-turq_img = pg.image.load("../images/turq.png")
-green_img = pg.image.load("../images/green.png")
-red_img = pg.image.load("../images/red.png")
-orange_img = pg.image.load("../images/orange.png")
-blue_img = pg.image.load("../images/blue.png")
-pink_img = pg.image.load("../images/pink.png")
-ghost_img = pg.image.load("../images/ghost.png")
+# Paths
+WALLS_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "block2020.png"
+YEL_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "yel.png"
+TURQ_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "turq.png"
+GREEN_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "green.png"
+RED_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "red.png"
+ORANGE_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "orange.png"
+BLUE_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "blue.png"
+PINK_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "pink.png"
+GHOST_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "images" / "ghost.png"
+
+# Images
+walls_img = pg.image.load(str(WALLS_IMG_PATH))
+yel_img = pg.image.load(str(YEL_IMG_PATH))
+turq_img = pg.image.load(str(TURQ_IMG_PATH))
+green_img = pg.image.load(str(GREEN_IMG_PATH))
+red_img = pg.image.load(str(RED_IMG_PATH))
+orange_img = pg.image.load(str(ORANGE_IMG_PATH))
+blue_img = pg.image.load(str(BLUE_IMG_PATH))
+pink_img = pg.image.load(str(PINK_IMG_PATH))
+ghost_img = pg.image.load(str(GHOST_IMG_PATH))
 
 images = [yel_img, turq_img, green_img, red_img,
           orange_img, blue_img, pink_img, walls_img, ghost_img]

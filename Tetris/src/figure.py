@@ -1,5 +1,5 @@
 import pygame as pg
-from gameboard import images
+from .gameboard import images
 
 
 def drawRect(display, imageNumber, x, y, w):
@@ -136,7 +136,8 @@ class Figure:
                     break
 
     def copy(self):
-        newF = Figure(self.colour, self.shape, (self.posX, self.posY), self.blockSize)
+        newF = Figure(self.colour, self.shape,
+                      (self.posX, self.posY), self.blockSize)
         newF.matrixPosX = self.matrixPosX
         newF.matrixPosY = self.matrixPosY
         newF.currentRotation = self.currentRotation
@@ -144,7 +145,8 @@ class Figure:
 
     def ghostCopy(self):
         f = self.copy()
-        f.shapeList = [[[0 for val in row] for row in shape] for shape in f.shapeList]
+        f.shapeList = [[[0 for val in row] for row in shape]
+                       for shape in f.shapeList]
         for i in range(4):
             shape = f.shapeList[i]
             for j in range(len(shape)):
@@ -159,7 +161,7 @@ class Figure:
         self.posY += self.blockSize
         self.matrixPosY += 1
 
-    def move(self,dist):
+    def move(self, dist):
         xMove, yMove = dist
 
         self.matrixPosX += xMove
@@ -184,10 +186,9 @@ class Figure:
                 'The shape {} does not exist.'.format(self.shapeList))
         return s
 
-
     def change_rotation(self, rotation):
         return self.shapeList[rotation]
-        
+
     def rotate_clockwise(self):
         self.currentRotation = (self.currentRotation + 1) % 4
 
