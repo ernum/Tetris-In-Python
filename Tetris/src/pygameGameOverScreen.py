@@ -9,7 +9,7 @@ fontPath = "../fonts/game_over.ttf"
 
 # Paths
 GAMEOVER_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "Sound" / "SoundEffects" / "gameover.wav"
+    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "gameover.wav"
 
 # Sound
 gameover_sound = pg.mixer.Sound(str(GAMEOVER_SOUND_PATH))
