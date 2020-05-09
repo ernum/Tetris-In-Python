@@ -26,17 +26,17 @@ BLOCK_SIZE = 20
 
 # Paths
 MUSIC_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "SOUND" / "Soundtrack" / "electrify.wav"
+    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "electrify.wav"
 SWOOSH_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "Swoosh.wav"
+    __file__).absolute().parents[1] / "Sound" / "SoundEffects" / "Swoosh.wav"
 IMPACT_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "Impact.wav"
+    __file__).absolute().parents[1] / "Sound" / "SoundEffects" / "Impact.wav"
 REMOVAL_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "Removal.wav"
+    __file__).absolute().parents[1] / "Sound" / "SoundEffects" / "Removal.wav"
 ERROR_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "error.wav"
+    __file__).absolute().parents[1] / "Sound" / "SoundEffects" / "error.wav"
 PAUSE_IMG_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "IMAGE" / "pauseScreen3.png"
+    __file__).absolute().parents[1] / "images" / "pauseScreen3.png"
 
 # Music
 pg.mixer.init()
