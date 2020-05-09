@@ -42,9 +42,18 @@ def sqrDistance(p1, p2):
 
 def titlePage(dis):
     pg.display.set_caption("TETRIS")
-    icon = pg.image.load("../images/tetrisIcon2.png")
 
-    keyImage = pg.image.load("../images/keys.png")
+    # Paths
+    ICON_IMG_PATH = pathlib.Path(
+        __file__).absolute().parents[1] / "images" / "tetrisIcon2.png"
+    KEYS_IMG_PATH = pathlib.Path(
+        __file__).absolute().parents[1] / "images" / "keys.png"
+
+    # Icon
+    icon = pg.image.load(str(ICON_IMG_PATH))
+
+    # Keys
+    keyImage = pg.image.load(str(KEYS_IMG_PATH))
     keyWidth = 300
     keyRect = keyImage.get_rect()
     keyHeight = int(keyWidth * keyRect.height/keyRect.width)

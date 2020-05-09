@@ -1,10 +1,13 @@
 from . import figure
+import pathlib
 import pygame as pg
 import random
 
 allShapes = ("O", "I", "S", "Z", "L", "J", "T")
 shapeColors = ((250, 250, 0), (20, 250, 250), (0, 255, 0),
                (255, 0, 0), (255, 150, 20), (0, 0, 255), (200, 20, 250))
+FONT_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "fonts" / "VCR_OSD_MONO_1.ttf"
 
 
 def randomShape(blockSize):
@@ -36,7 +39,7 @@ class figureQueue:
         shapeWidth = width
         shapeHeight = height // (self.queueSize + 1)
 
-        font = pg.font.Font("../fonts/VCR_OSD_MONO_1.ttf",
+        font = pg.font.Font(str(FONT_PATH),
                             int(shapeHeight*0.8))
         textSurf = font.render("Next", True, (255, 255, 255))
         textSize = textSurf.get_rect().size

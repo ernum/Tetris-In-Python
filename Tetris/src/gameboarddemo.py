@@ -24,19 +24,34 @@ board_cols = 12
 
 BLOCK_SIZE = 20
 
+# Paths
+MUSIC_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "SOUND" / "Soundtrack" / "electrify.wav"
+SWOOSH_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "Swoosh.wav"
+IMPACT_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "Impact.wav"
+REMOVAL_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "Removal.wav"
+ERROR_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "SOUND" / "SoundEffects" / "error.wav"
+PAUSE_IMG_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "IMAGE" / "pauseScreen3.png"
+
 # Music
 pg.mixer.init()
-pg.mixer.music.load("../Sound/Soundtrack/electrify.wav")
+pg.mixer.music.load(str(MUSIC_SOUND_PATH))
 pg.mixer.music.play(-1)
 pg.mixer.music.set_volume(0.6)
+
 # Sound effects
-rot_sound = pg.mixer.Sound("../Sound/SoundEffects/Swoosh.wav")
+rot_sound = pg.mixer.Sound(str(SWOOSH_SOUND_PATH))
 rot_sound.set_volume(0.5)
-impact_sound = pg.mixer.Sound("../Sound/SoundEffects/Impact.wav")
+impact_sound = pg.mixer.Sound(str(IMPACT_SOUND_PATH))
 impact_sound.set_volume(0.4)
-rem_sound = pg.mixer.Sound("../Sound/SoundEffects/Removal.wav")
+rem_sound = pg.mixer.Sound(str(REMOVAL_SOUND_PATH))
 rem_sound.set_volume(0.5)
-err_sound = pg.mixer.Sound("../Sound/SoundEffects/error.wav")
+err_sound = pg.mixer.Sound(str(ERROR_SOUND_PATH))
 err_sound.set_volume(0.5)
 
 
@@ -276,7 +291,7 @@ while True:
 
     # Draw pause message
     if game_state == PAUSE:
-        pause_img = pg.image.load("../images/pauseScreen3.png")
+        pause_img = pg.image.load(str(PAUSE_IMG_PATH))
         pause_img = pg.transform.scale(
             pause_img, ((board_cols - 2)*21 + 1, 100))
         dis.blit(pause_img, ((width - 21*board_cols)/2 + BLOCK_SIZE, 70))
