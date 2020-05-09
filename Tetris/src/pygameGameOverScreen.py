@@ -1,6 +1,6 @@
 import pygame as pg
 import time
-from UI import *
+from .UI import *
 
 FPS = 60
 clock = pg.time.Clock()
@@ -115,7 +115,6 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume
         exitButton.draw(dis)
         titleButton.draw(dis)
         volume.draw(dis)
-
 
         pg.display.update()
 

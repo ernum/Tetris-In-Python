@@ -2,7 +2,7 @@ import time
 
 import pygame as pg
 from random import randint as ri
-from UI import *
+from .UI import *
 
 fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
 
@@ -162,4 +162,3 @@ def titlePage(dis):
 
         clock.tick(FPS)
     start()
-

@@ -1,12 +1,13 @@
 import pygame as pg
-import figure
-import gameboard
-import generateShapes
-import pygameTitleScreen
-import pygameGameOverScreen
 import time
-from UI import *
-import Animations
+from . import Animations
+from . import figure
+from . import gameboard
+from . import generateShapes
+from . import pygameGameOverScreen
+from . import pygameTitleScreen
+from .UI import *
+
 
 BG_COLOR = (0, 0, 0)
 FPS = 60
