@@ -1,9 +1,9 @@
  # Tetris in python
 
 This is a Tetris game built using python and pygame.   
-<img src="images/TitlePage.png" width="250">
-<img src="images/GamePlay.png" width="250">
-<img src="images/GamePlay.gif" width="250">
+<img src="tetris/images/TitlePage.png" width="250">
+<img src="tetris/images/GamePlay.png" width="250">
+<img src="tetris/images/GamePlay.gif" width="250">
 
 
 ## MVP
@@ -13,7 +13,7 @@ This is a Tetris game built using python and pygame.
 * Shapes land on top of eachother or on the floor
 * All shapes from the classic tetris should be implemented
 
-<img src="images/tetris-shapes.png" alt="classic tetris shapes"/>
+<img src="teris/images/tetris-shapes.png" alt="classic tetris shapes"/>
 
 * If a row is filled with shapes, the row disappears
 * The game is over if a shape lands such that some part of it is over the game board.
