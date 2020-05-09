@@ -1,6 +1,5 @@
 import re
 from setuptools import setup, find_packages
-required = ["pygame"]
 
 setup(
     name="Tetris-in-Python",
@@ -9,5 +8,8 @@ setup(
     url="https://gits-15.sys.kth.se/jerikso/tetris-in-python",
     author="hostedt, jerikso and umeh",
     packages=find_packages(where="src"),
-    required=required,
+    install_requires=[
+        'pygame'
+    ],
+    python_requires='>=3'
 )
