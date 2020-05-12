@@ -302,7 +302,7 @@ while True:
 
     if game_state == RUNNING:
         if gameOver(gb.board):
-            if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset):
+            if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
                 reset()
 
     if landAnimation != None and not landAnimation.finished:
@@ -315,7 +315,8 @@ while True:
 
     if not tickReset and checkCollision(gb.board, f, (0, 1), 0):
         pg.mixer.Sound.play(impact_sound)
-        landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
+        landAnimationTime = FPS/tickRate
+        landAnimation = Animations.LandAnimation(f, landAnimationTime)
         tickCount = 1
         tickReset = True
 
