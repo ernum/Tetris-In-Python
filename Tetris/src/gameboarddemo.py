@@ -54,6 +54,8 @@ rem_sound.set_volume(0.5)
 err_sound = pg.mixer.Sound(str(ERROR_SOUND_PATH))
 err_sound.set_volume(0.5)
 
+sounds = [rot_sound,impact_sound,rem_sound,err_sound]
+
 
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
@@ -79,6 +81,9 @@ volume = VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sli
 
 volume.val = pg.mixer.music.get_volume()
 volume.muted = pygameTitleScreen.muted
+
+for i in sounds:
+    i.set_volume(volume.val)
 
 keyCheckRate = 20  # How many times per second the game checks if a key is held down
 das = 0.2  # delayed auto shift, how long after pressing a key it will be checked again. In seconds
@@ -213,7 +218,8 @@ def rotationCollision(figure, clockwise):
     # Test movements
     for i in movements[f.currentRotation]:
         if not checkCollision(gb.board, f, i, 1 if clockwise else -1):
-            pg.mixer.Sound.play(rot_sound)
+            if not volume.muted:
+                pg.mixer.Sound.play(rot_sound)
             f.rotate_clockwise() if clockwise else f.rotate_anticlockwise()
             f.move(i)
             return True
@@ -312,9 +318,12 @@ while True:
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
+            for i in sounds:
+                i.set_volume(volume.val)
 
     if not tickReset and checkCollision(gb.board, f, (0, 1), 0):
-        pg.mixer.Sound.play(impact_sound)
+        if not volume.muted:
+            pg.mixer.Sound.play(impact_sound)
         landAnimationTime = FPS/tickRate
         landAnimation = Animations.LandAnimation(f, landAnimationTime)
         tickCount = 1
@@ -330,7 +339,8 @@ while True:
                 gb.board = drawMatrix
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
-                    pg.mixer.Sound.play(rem_sound)
+                    if not volume.muted:
+                        pg.mixer.Sound.play(rem_sound)
                     newSurf = pg.Surface((width, height))
                     newSurf.fill(BG_COLOR)
                     queue.draw(newSurf, width - 90, 0, 90, 200)
@@ -365,10 +375,10 @@ while True:
             # Controls
             if game_state == RUNNING:
                 if event.key == pg.K_x:
-                    if not rotationCollision(f, True):
+                    if not rotationCollision(f, True) and not volume.muted:
                         pg.mixer.Sound.play(err_sound)
                 if event.key == pg.K_z:
-                    if not rotationCollision(f, False):
+                    if not rotationCollision(f, False) and not volume.muted:
                         pg.mixer.Sound.play(err_sound)
 
                 if event.key == pg.K_LEFT:
