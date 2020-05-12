@@ -213,7 +213,8 @@ def rotationCollision(figure, clockwise):
     # Test movements
     for i in movements[f.currentRotation]:
         if not checkCollision(gb.board, f, i, 1 if clockwise else -1):
-            pg.mixer.Sound.play(rot_sound)
+            if not volume.muted:
+                pg.mixer.Sound.play(rot_sound)
             f.rotate_clockwise() if clockwise else f.rotate_anticlockwise()
             f.move(i)
             return True
@@ -314,7 +315,8 @@ while True:
             pg.mixer.music.set_volume(volume.val)
 
     if not tickReset and checkCollision(gb.board, f, (0, 1), 0):
-        pg.mixer.Sound.play(impact_sound)
+        if not volume.muted:
+            pg.mixer.Sound.play(impact_sound)
         landAnimation = Animations.LandAnimation(f, int(1/(tickRate / FPS)))
         tickCount = 1
         tickReset = True
@@ -329,7 +331,8 @@ while True:
                 gb.board = drawMatrix
                 gb.board, removed_index = row_check(gb.board)
                 if len(removed_index) > 0:
-                    pg.mixer.Sound.play(rem_sound)
+                    if not volume.muted:
+                        pg.mixer.Sound.play(rem_sound)
                     newSurf = pg.Surface((width, height))
                     newSurf.fill(BG_COLOR)
                     queue.draw(newSurf, width - 90, 0, 90, 200)
@@ -364,10 +367,10 @@ while True:
             # Controls
             if game_state == RUNNING:
                 if event.key == pg.K_x:
-                    if not rotationCollision(f, True):
+                    if not rotationCollision(f, True) and not volume.muted:
                         pg.mixer.Sound.play(err_sound)
                 if event.key == pg.K_z:
-                    if not rotationCollision(f, False):
+                    if not rotationCollision(f, False) and not volume.muted:
                         pg.mixer.Sound.play(err_sound)
 
                 if event.key == pg.K_LEFT:
