@@ -12,16 +12,24 @@ This is a Tetris game built using python and pygame.
 * Shapes are falling downwards
 * Shapes land on top of eachother or on the floor
 * All shapes from the classic tetris should be implemented
-
-<img src="Tetris/images/tetris-shapes.png" alt="classic tetris shapes"/>
-
 * If a row is filled with shapes, the row disappears
 * The game is over if a shape lands such that some part of it is over the game board.
 
 
 ## Installation
+This application requires python and pygame.  
+To download python, visit https://www.python.org/downloads/  
+To download pygame, use ```pip install pygame```
 
-Coming soon...
+**Download:** 
+```git clone git@gits-15.sys.kth.se:jerikso/tetris-in-python.git```
+
+**Install:** 
+```cd tetris-in-python```
+```pip install .```
+
+**Run:**
+```python -m Tetris.src.gameboarddemo```
 
 ## Technologies
     Python 3
