@@ -54,6 +54,8 @@ rem_sound.set_volume(0.5)
 err_sound = pg.mixer.Sound(str(ERROR_SOUND_PATH))
 err_sound.set_volume(0.5)
 
+sounds = [rot_sound,impact_sound,rem_sound,err_sound]
+
 
 pygameTitleScreen.titlePage(dis)
 start_pos = (width/2 - 15, 20)
@@ -79,6 +81,9 @@ volume = VolumeController(sliderRect, (sliderRect[0] - volumeIconW / 2 - 10, sli
 
 volume.val = pg.mixer.music.get_volume()
 volume.muted = pygameTitleScreen.muted
+
+for i in sounds:
+    i.set_volume(volume.val)
 
 keyCheckRate = 20  # How many times per second the game checks if a key is held down
 das = 0.2  # delayed auto shift, how long after pressing a key it will be checked again. In seconds
@@ -313,6 +318,8 @@ while True:
     if pg.mouse.get_pressed()[0]:
         if volume.update():
             pg.mixer.music.set_volume(volume.val)
+            for i in sounds:
+                i.set_volume(volume.val)
 
     if not tickReset and checkCollision(gb.board, f, (0, 1), 0):
         if not volume.muted:

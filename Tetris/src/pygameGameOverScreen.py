@@ -28,6 +28,7 @@ def play():
 def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
     """This function will quit if the user chooses exit, return true if the user chooses
     play again or return false if the user chooses title."""
+    gameover_sound.set_volume(volume.val)
     if not volume.muted:
         pg.mixer.Sound.play(gameover_sound)
 
