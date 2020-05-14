@@ -6,6 +6,15 @@ from .UI import *
 
 fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
 
+INTRO_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "intro.ogg"
+MAIN_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "mainloop.ogg"
+INTRO_END = pg.USEREVENT+0
+pg.mixer.music.set_endevent(INTRO_END)
+pg.mixer.music.load(str(INTRO_SOUND_PATH))
+pg.mixer.music.play()
+
 white = (255, 255, 255)
 black = (0, 0, 0)
 yellow = (250, 250, 0)
@@ -109,6 +118,12 @@ def titlePage(dis):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 raise SystemExit
+
+            if event.type == INTRO_END and event.code == 0:
+                MAIN_END = pg.USEREVENT + 1
+                pg.mixer.music.set_endevent(MAIN_END)
+                pg.mixer.music.load(str(MAIN_SOUND_PATH))
+                pg.mixer.music.play(-1)
 
             if event.type == pg.MOUSEBUTTONUP and event.button == 1:
                 p = pg.mouse.get_pos()
