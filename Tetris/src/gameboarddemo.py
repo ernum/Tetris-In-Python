@@ -306,6 +306,8 @@ while True:
     levelText.draw(dis)
     scoreText.draw(dis)
 
+    pg.display.update()
+
     if game_state == RUNNING:
         if gameOver(gb.board):
             if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
