@@ -25,8 +25,8 @@ board_cols = 12
 BLOCK_SIZE = 20
 
 # Paths
-MUSIC_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "electrify.wav"
+MAIN_SOUND_PATH = pathlib.Path(
+    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "mainloop.ogg"
 SWOOSH_SOUND_PATH = pathlib.Path(
     __file__).absolute().parents[1] / "Sound" / "SoundEffects" / "Swoosh.wav"
 IMPACT_SOUND_PATH = pathlib.Path(
@@ -40,8 +40,8 @@ PAUSE_IMG_PATH = pathlib.Path(
 
 # Music
 pg.mixer.init()
-pg.mixer.music.load(str(MUSIC_SOUND_PATH))
-pg.mixer.music.play(-1)
+INTRO_END = pg.USEREVENT+0
+pg.mixer.music.set_endevent(INTRO_END)
 pg.mixer.music.set_volume(0.6)
 
 # Sound effects
@@ -367,6 +367,12 @@ while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             raise SystemExit
+
+        if event.type == INTRO_END and event.code == 0:
+            MAIN_END = pg.USEREVENT + 1
+            pg.mixer.music.set_endevent(MAIN_END)
+            pg.mixer.music.load(str(MAIN_SOUND_PATH))
+            pg.mixer.music.play(-1)
 
         if event.type == pg.MOUSEBUTTONUP and event.button == 1:
             p = pg.mouse.get_pos()
