@@ -181,8 +181,8 @@ def row_check(currentMatrix):
 
 # Removes empty row and updates the board
 def empty_row_removal(currentMatrix, removed_index):
-    for i in removed_index:
-        for r in range(removed_index[0], -1, -1):
+    for i in range(len(removed_index)-1, -1, -1):
+        for r in range(removed_index[i], -1, -1):
             if r == 0:
                 currentMatrix[r][1:len(
                     currentMatrix[r]) - 1] = [0 for n in range(len(currentMatrix[0]) - 2)]
