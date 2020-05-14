@@ -55,9 +55,6 @@ def gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume
     sliderRect = (w-sliderWidth-sliderMargin, h-sliderHeight -
                   sliderMargin, sliderWidth, sliderHeight)
 
-    tickReset = True
-    if landAnimation != None:
-        landAnimation.finished = True
 
     # Text
     game = Text("GAME", textColor,
