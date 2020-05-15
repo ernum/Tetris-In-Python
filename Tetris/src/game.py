@@ -243,12 +243,18 @@ def drawGhost(board, drawMatrix, figure):
 
 
 def reset():
-    gb = gameboard.Board((255, 255, 255), ((width - 21*board_cols)/2),
-                         0, board_rows, board_cols, 20)
-    drawMatrix = matrix_merge(gb.board, f)
-    ghostMatrix = drawGhost(gb.board, drawMatrix, f)
-    gb.drawMatrix(dis, ghostMatrix)
-    pg.display.update()
+    global score, level, linesCleared, scoreText, landAnimation, rowAnimations, removed_index
+    f.matrixPosX = -10
+    f.matrisPosY = -10
+    level = -1
+    score = 0
+    linesCleared = 0
+    landAnimation = Animations.LandAnimation(f,30)
+    scoreText = createScoreText(score)
+    nextLevel()
+    removed_index = []
+
+
 
 
 def nextLevel():
@@ -327,7 +333,8 @@ while True:
         if not volume.muted:
             pg.mixer.Sound.play(impact_sound)
         landAnimationTime = FPS/tickRate
-        landAnimation = Animations.LandAnimation(f, landAnimationTime)
+        if landAnimation == None or landAnimation.finished:
+            landAnimation = Animations.LandAnimation(f, landAnimationTime)
         tickCount = 1
         tickReset = True
 
@@ -353,9 +360,9 @@ while True:
                             removed_index, dis, newSurf).play(dis)
 
                     gb.board = empty_row_removal(gb.board, removed_index)
-                    linesCleared += len(removed_index)
 
                     if len(removed_index) <= 4:
+                        linesCleared += len(removed_index)
                         score += calcPoints(level, len(removed_index))
                         scoreText = createScoreText(score)
                         if linesCleared >= linesClearedForNewLevel:

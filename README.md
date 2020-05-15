@@ -29,7 +29,7 @@ To download pygame, use ```pip install pygame```
 ```pip install .```
 
 **Run:**
-```python -m Tetris.src.gameboarddemo```
+```python -m Tetris.src.game```
 
 ## Technologies
     Python 3
