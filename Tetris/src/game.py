@@ -151,6 +151,7 @@ def nextShape(queue, currentMatrix):
         if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
             reset()
         else:
+            reset()
             pygameTitleScreen.titlePage(dis)
 
     return figure
@@ -316,8 +317,8 @@ while True:
 
     if game_state == RUNNING:
         if gameOver(gb.board):
-            if pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume):
-                reset()
+            pygameGameOverScreen.gameOverAnimation(dis, matrix_merge, landAnimation, gb, f, tickReset, volume)
+            reset()
 
     if landAnimation != None and not landAnimation.finished:
         landAnimation.draw(dis)
