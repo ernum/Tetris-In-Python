@@ -95,7 +95,7 @@ levelText = None
 levelTextSize = 50
 
 linesCleared = 0
-linesClearedForNewLevel = 10
+linesClearedForNewLevel = 6
 
 score = 0
 
