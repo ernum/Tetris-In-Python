@@ -1,10 +1,11 @@
  # Tetris in python
 
-This is a Tetris game built using python and pygame.   
+This is a fully functioning Tetris clone with scoring, start menu, game over state and menu, sound effects, a game music track, the ability to mute all sound or change the volume and pause functionality. The start menu has start and exit buttons and explains the controlls. The game over menu has exit or restart buttons. In the game you also have a preview of
+the next 4 pieces and increased difficulty based on rows cleared/score. This clone also uses the super rotation system for piece rotation.
+
 <img src="Tetris/images/TitlePage.png" width="250">
 <img src="Tetris/images/GamePlay.png" width="250">
 <img src="Tetris/images/GamePlay.gif" width="250">
-
 
 ## MVP
 
@@ -21,10 +22,10 @@ This application requires python and pygame.
 To download python, visit https://www.python.org/downloads/  
 To download pygame, use ```pip install pygame```
 
-**Download:** 
+**Download:**
 ```git clone git@gits-15.sys.kth.se:jerikso/tetris-in-python.git```
 
-**Install:** 
+**Install:**
 ```cd tetris-in-python```
 ```pip install .```
 
