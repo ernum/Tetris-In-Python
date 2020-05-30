@@ -7,7 +7,7 @@ from .UI import *
 fontPath = "../fonts/VCR_OSD_MONO_1.ttf"
 
 INTRO_SOUND_PATH = pathlib.Path(
-    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "intro.ogg"
+    __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "Intro.ogg"
 MAIN_SOUND_PATH = pathlib.Path(
     __file__).absolute().parents[1] / "Sound" / "Soundtrack" / "mainloop.ogg"
 INTRO_END = pg.USEREVENT+0
