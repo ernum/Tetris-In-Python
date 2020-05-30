@@ -1,0 +1,1 @@
+recursive-include Tetris/ *.wav *.ttf *.png *.ogg
