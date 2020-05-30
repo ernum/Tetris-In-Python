@@ -10,7 +10,7 @@ setup(
     packages=find_packages(where="."),
     package_data={
         "Tetris.Sound.SoundEffect": ["*.wav"],
-        "Tetris.Sound.Soundtrack": ["*.wav"],
+        "Tetris.Sound.Soundtrack": ["*.ogg"],
         "Tetris.images": ["*.png"],
         "Tetris.fonts": ["*.ttf"],
     },
