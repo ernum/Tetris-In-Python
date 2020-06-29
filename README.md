@@ -23,7 +23,7 @@ To download python, visit https://www.python.org/downloads/
 To download pygame, use ```pip install pygame```
 
 **Download:**
-```git clone git@gits-15.sys.kth.se:jerikso/tetris-in-python.git```
+```git clone git@github.com:ernum/tetris-in-python.git```
 
 **Install:**
 ```cd tetris-in-python```
